@@ -1,0 +1,33 @@
+{
+  "$comment": "Example POST https://api.biconomy.io/v1/execute — submit a signed quote previously returned by /v1/quote.",
+  "request": {
+    "method": "POST",
+    "url": "https://api.biconomy.io/v1/execute",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-API-Key": "<BICONOMY_API_KEY>"
+    },
+    "body": {
+      "quote": {
+        "quoteType": "supertransaction"
+      },
+      "payloadSignatures": [
+        {
+          "format": "eip712-permit",
+          "signature": "0x...64bytes..."
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "supertransactionHash": "0xabc...123",
+      "perChainHashes": [
+        { "chainId": 8453, "txHash": "0xdef...456" },
+        { "chainId": 42161, "txHash": "0x789...abc" }
+      ],
+      "explorerUrl": "https://meescan.biconomy.io/tx/0xabc...123"
+    }
+  }
+}

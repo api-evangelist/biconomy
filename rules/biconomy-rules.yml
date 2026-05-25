@@ -1,0 +1,56 @@
+extends: ["spectral:oas"]
+rules:
+  biconomy-info-title:
+    description: Biconomy OpenAPI documents must declare info.title.
+    severity: error
+    given: $.info
+    then:
+      field: title
+      function: truthy
+  biconomy-server-base-url:
+    description: Biconomy API servers must point at api.biconomy.io.
+    severity: error
+    given: $.servers[*]
+    then:
+      field: url
+      function: pattern
+      functionOptions:
+        match: "^https://api\\.biconomy\\.io"
+  biconomy-apikey-header:
+    description: Biconomy API uses the X-API-Key header for authentication.
+    severity: error
+    given: $.components.securitySchemes[*]
+    then:
+      - field: name
+        function: pattern
+        functionOptions:
+          match: "^X-API-Key$"
+      - field: in
+        function: pattern
+        functionOptions:
+          match: "^header$"
+  biconomy-paths-prefixed-v1:
+    description: All Biconomy MEE paths must be prefixed with /v1.
+    severity: error
+    given: $.paths
+    then:
+      field: "@key"
+      function: pattern
+      functionOptions:
+        match: "^/v1/"
+  biconomy-operation-summary-title-case:
+    description: Operation summaries should use Title Case.
+    severity: warn
+    given: $.paths[*][*].summary
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[A-Z][A-Za-z0-9 /\\-]+$"
+  biconomy-operation-id-camel-case:
+    description: operationId values should be camelCase.
+    severity: warn
+    given: $.paths[*][*].operationId
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z][a-zA-Z0-9]*$"

@@ -1,0 +1,70 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "biconomy": "https://biconomy.io/vocab#",
+    "erc": "https://eips.ethereum.org/EIPS/",
+    "Provider": "schema:Organization",
+    "API": "schema:WebAPI",
+    "SmartAccount": "biconomy:SmartAccount",
+    "Nexus": "biconomy:Nexus",
+    "MEE": "biconomy:ModularExecutionEnvironment",
+    "Supertransaction": "biconomy:Supertransaction",
+    "ComposeFlow": "biconomy:ComposeFlow",
+    "Instruction": "biconomy:Instruction",
+    "Quote": "biconomy:Quote",
+    "Paymaster": "biconomy:Paymaster",
+    "Bundler": "biconomy:Bundler",
+    "Sponsorship": "biconomy:Sponsorship",
+    "SmartSession": "biconomy:SmartSession",
+    "Policy": "biconomy:Policy",
+    "Chain": "biconomy:Chain",
+    "chainId": "biconomy:chainId",
+    "fundingToken": "biconomy:fundingToken",
+    "feeToken": "biconomy:feeToken",
+    "ownerAddress": "biconomy:ownerAddress",
+    "authorization": "biconomy:eip7702Authorization",
+    "mode": {
+      "@id": "biconomy:accountMode",
+      "@type": "@id"
+    },
+    "module": {
+      "@id": "biconomy:module",
+      "@type": "@id"
+    },
+    "implements": {
+      "@id": "biconomy:implements",
+      "@type": "@id"
+    },
+    "ERC4337": "erc:eip-4337",
+    "ERC7579": "erc:eip-7579",
+    "ERC7702": "erc:eip-7702",
+    "ERC8211": "erc:eip-8211"
+  },
+  "@graph": [
+    {
+      "@id": "https://biconomy.io",
+      "@type": "Provider",
+      "name": "Biconomy",
+      "url": "https://biconomy.io",
+      "sameAs": [
+        "https://github.com/bcnmy",
+        "https://docs.biconomy.io",
+        "https://dashboard.biconomy.io"
+      ]
+    },
+    {
+      "@id": "biconomy:MEE",
+      "@type": "API",
+      "name": "Biconomy MEE Supertransaction API",
+      "url": "https://api.biconomy.io",
+      "documentation": "https://docs.biconomy.io/overview/supertransaction-api"
+    },
+    {
+      "@id": "biconomy:Nexus",
+      "@type": "SmartAccount",
+      "name": "Nexus",
+      "implements": ["ERC7579", "ERC4337"],
+      "url": "https://github.com/bcnmy/nexus"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "$comment": "Example POST https://api.biconomy.io/v1/quote — EIP-7702 mode, gasless swap on Base + bridge to Arbitrum.",
+  "request": {
+    "method": "POST",
+    "url": "https://api.biconomy.io/v1/quote",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-API-Key": "<BICONOMY_API_KEY>"
+    },
+    "body": {
+      "mode": "eoa-7702",
+      "ownerAddress": "0x0a7C906832544293a6018bA25280c7f7b0Bbf120",
+      "authorizations": [
+        {
+          "address": "0x00000069E0Fb590E092Dd0E36FF93ac28ff11a3a",
+          "chainId": 8453,
+          "nonce": 17,
+          "r": "0x...",
+          "s": "0x...",
+          "yParity": 0
+        }
+      ],
+      "composeFlows": [
+        {
+          "type": "/instructions/intent-simple",
+          "fromChainId": 8453,
+          "toChainId": 42161,
+          "tokenIn": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "tokenOut": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+          "amount": "1000000"
+        }
+      ],
+      "feeToken": {
+        "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "chainId": 8453
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "quote": {
+        "quoteType": "supertransaction",
+        "fee": {
+          "token": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+          "chainId": 8453,
+          "amount": "2500",
+          "usd": "0.0025"
+        },
+        "userOps": [
+          {
+            "chainId": 8453,
+            "sender": "0x0a7C906832544293a6018bA25280c7f7b0Bbf120",
+            "nonce": "0x1",
+            "callGasLimit": "0x30D40",
+            "verificationGasLimit": "0x186A0",
+            "preVerificationGas": "0xC350",
+            "maxFeePerGas": "0x3B9ACA00",
+            "maxPriorityFeePerGas": "0x77359400"
+          }
+        ]
+      },
+      "payloadsToSign": [
+        { "format": "eip712-permit", "data": { "domain": "...", "message": "..." } }
+      ],
+      "instructions": [
+        { "kind": "intent-simple", "chainId": 8453, "calls": [] }
+      ]
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/biconomy/main/json-schema/biconomy-quote-response-schema.json",
+  "title": "Biconomy MEE Quote Response",
+  "description": "Response body for POST https://api.biconomy.io/v1/quote.",
+  "type": "object",
+  "required": ["quote", "payloadsToSign"],
+  "properties": {
+    "quote": {
+      "type": "object",
+      "description": "The composed MEE quote.",
+      "properties": {
+        "quoteType": { "type": "string" },
+        "fee": {
+          "type": "object",
+          "properties": {
+            "token": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$" },
+            "chainId": { "type": "integer" },
+            "amount": { "type": "string" },
+            "usd": { "type": "string" }
+          }
+        },
+        "userOps": {
+          "type": "array",
+          "description": "Per-chain ERC-4337 userOps composing the supertransaction.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chainId": { "type": "integer" },
+              "sender": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$" },
+              "nonce": { "type": "string" },
+              "callGasLimit": { "type": "string" },
+              "verificationGasLimit": { "type": "string" },
+              "preVerificationGas": { "type": "string" },
+              "maxFeePerGas": { "type": "string" },
+              "maxPriorityFeePerGas": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "payloadsToSign": {
+      "type": "array",
+      "description": "Payloads the owner must sign before calling /v1/execute. Shape depends on the chosen mode.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["eip712-permit", "on-chain", "simple", "message"]
+          },
+          "data": {}
+        }
+      }
+    },
+    "instructions": {
+      "type": "array",
+      "description": "Resolved instruction calls produced by composing the requested composeFlows."
+    }
+  }
+}

@@ -1,0 +1,90 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Biconomy
+providerId: biconomy
+created: '2026-05-25'
+modified: '2026-05-25'
+reconciled: false
+tags:
+  - FinOps
+  - Cost Management
+  - FOCUS
+  - Account Abstraction
+  - Gas
+  - Paymaster
+description: >-
+  FOCUS-aligned FinOps definition for Biconomy's MEE + Sponsorship Paymaster
+  product. Cost is composed of two distinct surfaces: the MEE fee (a
+  per-supertransaction service charge denominated in the chosen feeToken) and
+  reimbursed on-chain gas (paymaster spend, invoiced at cost in USD-equivalent
+  monthly).
+sources:
+  - https://docs.biconomy.io/gasless-apps/sponsorship
+  - https://docs.biconomy.io/overview/supertransaction-api
+  - https://dashboard.biconomy.io
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Biconomy
+serviceCategory: Web3 Infrastructure
+billingModel:
+  pricingCategory: Usage-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+    - Usage
+    - Purchase
+    - Adjustment
+  primaryUnit: supertransaction
+  secondaryUnits:
+    - gas_unit
+    - userop
+    - chain_call
+focusColumns:
+  ServiceName: Biconomy MEE
+  ServiceCategory: Web3 Infrastructure
+  ProviderName: Biconomy
+  PublisherName: Biconomy
+  InvoiceIssuerName: Biconomy
+  PricingCategory: Usage-Based
+costSurfaces:
+  - id: mee-fee
+    name: MEE Supertransaction Fee
+    metric: supertransaction
+    direction: service-charge
+    description: >-
+      Service fee charged by Biconomy per supertransaction. Returned in the
+      /v1/quote response and deducted from the user's feeToken on settlement
+      (or sponsored by the developer when feeToken is omitted).
+  - id: sponsored-gas
+    name: Sponsored Gas (Paymaster)
+    metric: gas_unit
+    direction: reimbursement
+    description: >-
+      On-chain gas paid by Biconomy's paymaster on behalf of the user, then
+      reimbursed by the developer. Invoiced monthly, denominated in USD.
+  - id: bundler
+    name: Bundler Submission
+    metric: userop
+    direction: included
+    description: >-
+      ERC-4337 userOp packaging and submission. Included in the MEE fee for
+      MEE-routed transactions; charged separately only when a hosted standalone
+      bundler is consumed directly.
+controls:
+  - name: Per-transaction USD cap
+    surface: dashboard
+    description: Maximum USD the paymaster will sponsor for a single transaction.
+  - name: Per-user / per-day cap
+    surface: dashboard
+    description: Maximum cumulative USD the paymaster will sponsor for one user in a day.
+  - name: Allowed contracts
+    surface: dashboard
+    description: Whitelist of destination contracts eligible for sponsorship.
+  - name: Chain whitelist
+    surface: dashboard
+    description: List of chain IDs on which sponsorship is enabled for this API key.

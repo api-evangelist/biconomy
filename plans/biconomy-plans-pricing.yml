@@ -1,0 +1,86 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Biconomy
+providerId: biconomy
+created: '2026-05-25'
+modified: '2026-05-25'
+reconciled: false
+tags:
+  - Account Abstraction
+  - Gas Sponsorship
+  - Bundler
+  - Paymaster
+  - MEE
+description: >-
+  Biconomy commercial model summary. The Supertransaction / MEE API and the
+  Sponsorship Paymaster operate on a post-paid usage model billed monthly via
+  the Biconomy Dashboard. Gas sponsorship and paymaster usage are reimbursed
+  by the developer at cost plus the configured MEE fee surface (feeToken on
+  /v1/quote). Pricing tiers and overage thresholds are negotiated through the
+  dashboard rather than published as fixed list prices, so the entries below
+  capture the structure of the offering rather than rate-card numbers.
+sources:
+  - https://www.biconomy.io
+  - https://docs.biconomy.io
+  - https://dashboard.biconomy.io
+  - https://docs.biconomy.io/gasless-apps/sponsorship
+  - https://docs.biconomy.io/overview/supertransaction-api
+plans:
+  - id: biconomy-mee-developer
+    name: MEE Developer
+    type: usage-based
+    description: >-
+      Dashboard self-serve tier. Free API key issuance, pay-as-you-go for MEE
+      fees and reimbursed gas. Per-transaction USD limits, allowed-contract
+      lists, and chain restrictions all configured in the dashboard.
+    entries:
+      - label: API key
+        name: api_key
+        type: included
+        metric: key
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: '0.00'
+        userMultiplied: false
+      - label: MEE fee
+        name: mee_fee
+        type: metered
+        metric: supertransaction
+        limit: -1
+        timeFrame: usage
+        geo: global
+        unit: 1
+        price: dashboard
+        userMultiplied: false
+        description: Per-supertransaction MEE fee, returned in the /v1/quote response and paid in the feeToken.
+      - label: Sponsored gas reimbursement
+        name: sponsored_gas
+        type: metered
+        metric: gas
+        limit: -1
+        timeFrame: month
+        geo: global
+        unit: 1
+        price: at-cost
+        userMultiplied: false
+        description: Pass-through of paymaster gas paid on behalf of users. Invoiced monthly.
+  - id: biconomy-enterprise
+    name: Enterprise
+    type: custom
+    description: >-
+      Volume-discounted MEE + sponsorship contract with dedicated infrastructure,
+      SLAs, and self-hosted node options. Pricing negotiated.
+    entries:
+      - label: Custom contract
+        name: custom_contract
+        type: contract
+        metric: agreement
+        limit: -1
+        timeFrame: year
+        geo: global
+        unit: 1
+        price: contact-sales
+        userMultiplied: false

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-structure.org/v1/draft",
+  "title": "Biconomy Supertransaction Structure",
+  "description": "Conceptual structure of a Biconomy MEE supertransaction. A supertransaction is a multichain composable execution plan produced from one or more composeFlow instructions, signed once by the owner, and submitted via /v1/execute.",
+  "type": "object",
+  "properties": {
+    "supertransaction": {
+      "type": "object",
+      "properties": {
+        "mode": { "type": "string", "enum": ["smart-account", "eoa", "eoa-7702"] },
+        "owner": { "type": "string", "description": "Owner EOA address" },
+        "orchestrator": { "type": "string", "description": "MEE orchestrator account address" },
+        "feeToken": { "type": "string", "description": "Token paying the MEE service fee, or null when sponsored" },
+        "instructions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["intent-simple", "intent", "intent-vault", "build", "build-raw", "build-ccip"]
+              },
+              "chainId": { "type": "integer" },
+              "calls": { "type": "array", "items": { "type": "object" } },
+              "constraints": { "type": "array", "items": { "type": "object" } }
+            }
+          }
+        },
+        "userOps": {
+          "type": "array",
+          "description": "ERC-4337 userOps emitted per chain.",
+          "items": { "type": "object" }
+        },
+        "signatures": {
+          "type": "array",
+          "description": "Owner signatures over each payloadToSign returned by /v1/quote.",
+          "items": { "type": "object" }
+        }
+      }
+    }
+  }
+}

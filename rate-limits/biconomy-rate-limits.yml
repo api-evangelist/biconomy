@@ -1,0 +1,51 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Biconomy
+providerId: biconomy
+created: '2026-05-25'
+modified: '2026-05-25'
+reconciled: false
+tags:
+  - Rate Limiting
+  - Account Abstraction
+  - MEE
+description: >-
+  Documented rate-limit posture for the Biconomy Supertransaction API.
+  Specific quantitative RPS/quota numbers are issued per project from the
+  Biconomy Dashboard and are not published as a fixed rate card. Sponsorship
+  policy limits (per-tx USD cap, per-user / per-day caps, allowed contracts,
+  chain whitelist) are configured per project and enforced before /v1/quote
+  returns a sponsored quote.
+sources:
+  - https://docs.biconomy.io/overview/supertransaction-api
+  - https://docs.biconomy.io/gasless-apps/sponsorship
+  - https://dashboard.biconomy.io
+algorithm: token-bucket
+responseCodes:
+  throttled: 429
+  quotaExceeded: 402
+  unauthorized: 401
+  forbidden: 403
+limits:
+  - tier: Developer
+    surface: /v1/quote
+    rpm: dashboard
+    description: Per-API-key request rate on quote composition. Issued from dashboard.biconomy.io.
+  - tier: Developer
+    surface: /v1/execute
+    rpm: dashboard
+    description: Per-API-key request rate on supertransaction execution.
+  - tier: Sponsorship
+    surface: Paymaster
+    perTxUsd: dashboard
+    perUserDailyUsd: dashboard
+    perProjectMonthlyUsd: dashboard
+    description: Sponsorship paymaster spend caps configured per project in the dashboard.
+notes:
+  - Biconomy does not publish a fixed quantitative rate card; limits are issued and adjusted per project from
+    the dashboard.
+  - 429 responses indicate request-rate throttling; 402 / sponsorship-rejected indicates a spend-cap or policy
+    violation rather than a transport rate limit.
+  - All sponsorship limits and configurations are managed exclusively through the Biconomy Dashboard, not in
+    code.

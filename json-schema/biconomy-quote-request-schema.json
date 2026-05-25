@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/biconomy/main/json-schema/biconomy-quote-request-schema.json",
+  "title": "Biconomy MEE Quote Request",
+  "description": "Request body for POST https://api.biconomy.io/v1/quote. Composes instructions and returns a signable MEE supertransaction quote.",
+  "type": "object",
+  "required": ["mode", "ownerAddress", "composeFlows"],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["smart-account", "eoa", "eoa-7702"],
+      "description": "Account mode driving signature shape and gas funding rules."
+    },
+    "ownerAddress": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$",
+      "description": "EOA address that owns the orchestrator account."
+    },
+    "authorizations": {
+      "type": "array",
+      "description": "EIP-7702 authorization tuples used to delegate the EOA to a Nexus implementation. Required for eoa-7702 mode.",
+      "items": {
+        "type": "object",
+        "required": ["address", "chainId", "nonce", "r", "s"],
+        "properties": {
+          "address": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "chainId": { "type": "integer", "minimum": 1 },
+          "nonce": { "type": "integer", "minimum": 0 },
+          "r": { "type": "string" },
+          "s": { "type": "string" },
+          "v": { "type": "integer" },
+          "yParity": { "type": "integer", "enum": [0, 1] }
+        }
+      }
+    },
+    "composeFlows": {
+      "type": "array",
+      "description": "Ordered list of instructions to compose into a supertransaction.",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "/instructions/intent-simple",
+              "/instructions/intent",
+              "/instructions/intent-vault",
+              "/instructions/build",
+              "/instructions/build-raw",
+              "/instructions/build-ccip"
+            ]
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "fundingTokens": {
+      "type": "array",
+      "description": "Tokens the user is willing to spend to fund this supertransaction. Required for eoa mode.",
+      "items": {
+        "type": "object",
+        "required": ["address", "chainId"],
+        "properties": {
+          "address": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$" },
+          "chainId": { "type": "integer", "minimum": 1 },
+          "amount": { "type": "string" }
+        }
+      }
+    },
+    "feeToken": {
+      "type": "object",
+      "description": "Token used to pay the MEE fee. Omit for sponsored execution.",
+      "required": ["address", "chainId"],
+      "properties": {
+        "address": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$" },
+        "chainId": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "cleanups": {
+      "type": "array",
+      "description": "Optional cleanup configs to sweep intermediate tokens after the supertransaction completes.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tokenAddress": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$" },
+          "chainId": { "type": "integer" },
+          "recipient": { "type": "string", "pattern": "^0x[a-fA-F0-9]{40}$" },
+          "gasLimit": { "type": "string" }
+        }
+      }
+    },
+    "sponsorship": {
+      "type": "object",
+      "description": "Optional sponsorship hints. Final policy is enforced server-side from the dashboard config attached to the API key.",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

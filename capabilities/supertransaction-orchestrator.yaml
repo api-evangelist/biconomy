@@ -1,0 +1,63 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: Biconomy Supertransaction API — Orchestrator
+  description: 'Biconomy MEE Orchestrator lookup. Returns the orchestrator account address used to settle a
+    supertransaction for a given owner across MEE-supported chains.'
+  tags:
+  - Biconomy
+  - Account Abstraction
+  - MEE
+  - Orchestrator
+  created: '2026-05-25'
+  modified: '2026-05-25'
+binds:
+- namespace: env
+  keys:
+    BICONOMY_API_KEY: BICONOMY_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: supertransaction-orchestrator
+    baseUri: https://api.biconomy.io
+    description: Biconomy MEE orchestrator account lookup.
+    resources:
+    - name: v1-mee-orchestrator
+      path: /v1/mee/orchestrator
+      operations:
+      - name: getOrchestrator
+        method: POST
+        description: Look up the MEE orchestrator account for an owner / mode pair.
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          required: true
+    authentication:
+      type: apikey
+      key: X-API-Key
+      value: '{{env.BICONOMY_API_KEY}}'
+      placement: header
+  exposes:
+  - type: mcp
+    namespace: supertransaction-orchestrator-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for Biconomy MEE Orchestrator lookup.
+    tools:
+    - name: biconomy-get-orchestrator
+      description: Look up the MEE orchestrator account for a given owner.
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: supertransaction-orchestrator.getOrchestrator
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.

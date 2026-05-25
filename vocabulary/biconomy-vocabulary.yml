@@ -1,0 +1,69 @@
+vocabulary: Biconomy
+version: '0.1'
+description: >-
+  Core vocabulary for the Biconomy account-abstraction platform. Captures the
+  proper-noun terms a developer encounters across MEE, AbstractJS, Nexus, the
+  Sponsorship Paymaster, the Bundler, and Smart Sessions.
+sources:
+  - https://docs.biconomy.io
+  - https://github.com/bcnmy/nexus
+  - https://github.com/bcnmy/abstractjs
+  - https://github.com/bcnmy/bundler
+terms:
+  - term: MEE
+    definition: Modular Execution Environment. Biconomy's hosted infrastructure that composes, signs, and settles
+      multichain supertransactions.
+    aliases:
+      - Modular Execution Environment
+  - term: Supertransaction
+    definition: A multichain composable execution plan produced from one or more composeFlow instructions,
+      signed once by the owner, and settled across chains by MEE nodes.
+  - term: ComposeFlow
+    definition: An ordered list of instructions submitted to /v1/quote describing what the supertransaction
+      should do.
+  - term: Instruction
+    definition: A single composable building block (intent, build, build-raw, build-ccip) emitted into a
+      supertransaction.
+  - term: Nexus
+    definition: Biconomy's ERC-7579 modular smart account implementation, audited and deployed across 20+ EVM
+      chains.
+  - term: AbstractJS
+    definition: Biconomy's TypeScript SDK (NPM @biconomy/abstractjs) wrapping the Supertransaction API and
+      Nexus smart-account operations with a Viem-shaped API.
+  - term: Smart Session
+    definition: Scoped, time-bounded permission grant on a Nexus smart account that lets an agent or
+      automation execute a constrained set of transactions without re-prompting the owner.
+  - term: Policy
+    definition: A constraint attached to a smart session (sudo, universal-action, time-range, usage-limit)
+      controlling what the session may do.
+  - term: Bundler
+    definition: ERC-4337 service that packages userOps into a single transaction and submits it to the
+      EntryPoint contract. Biconomy operates a hosted TypeScript bundler on supported chains.
+  - term: Paymaster
+    definition: ERC-4337 contract that fronts gas for a userOp. Biconomy's Sponsorship Paymaster pays gas on
+      behalf of the user and bills the developer post-paid.
+  - term: Sponsorship
+    definition: Gas-abstraction mode in which the developer (via dashboard policy) pays gas for users instead
+      of requiring a feeToken.
+  - term: EntryPoint
+    definition: The ERC-4337 singleton contract through which all account-abstraction userOps are routed.
+      Biconomy supports both v0.6.0 and v0.7.0 EntryPoints.
+  - term: ERC-4337
+    definition: Account abstraction via alternative mempool.
+    url: https://eips.ethereum.org/EIPS/eip-4337
+  - term: ERC-7579
+    definition: Minimal modular smart account interface — the standard Nexus implements.
+    url: https://eips.ethereum.org/EIPS/eip-7579
+  - term: EIP-7702
+    definition: Set-code transactions allowing an EOA to temporarily adopt smart-account behaviour for the
+      duration of a transaction. Powers Biconomy's eoa-7702 mode.
+    url: https://eips.ethereum.org/EIPS/eip-7702
+  - term: Orchestrator account
+    definition: The deterministic MEE-side account that holds intermediate state for a supertransaction across
+      chains.
+  - term: feeToken
+    definition: Token the user spends to pay the MEE service fee. Omit to request a sponsored quote.
+  - term: fundingToken
+    definition: Token the user is willing to spend to fund execution. Required in eoa mode.
+  - term: MEEScan
+    definition: Biconomy's MEE explorer at https://meescan.biconomy.io for tracking supertransactions.

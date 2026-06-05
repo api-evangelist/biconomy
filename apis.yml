@@ -1,378 +1,376 @@
 aid: biconomy
 url: https://raw.githubusercontent.com/api-evangelist/biconomy/refs/heads/main/apis.yml
 apis:
-- aid: biconomy:biconomy-supertransaction-api
-  name: Biconomy Supertransaction API
-  tags:
-  - Account Abstraction
-  - ERC-4337
-  - ERC-7702
-  - MEE
-  - Quotes
-  - Cross-Chain
-  - Gasless
-  humanURL: https://docs.biconomy.io/overview/supertransaction-api
-  baseURL: https://api.biconomy.io
-  properties:
-  - url: https://docs.biconomy.io/overview/supertransaction-api
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/supertransaction-api/get-quote
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/supertransaction-api/quote-eoa
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/supertransaction-api/quote-smart-account
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/supertransaction-api/quote-7702
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/supertransaction-api/sign-payload
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/supertransaction-api/execute
-    type: Documentation
-  - url: openapi/biconomy-supertransaction-api-openapi.yml
-    type: OpenAPI
-  - url: json-schema/biconomy-quote-request-schema.json
-    type: JSONSchema
-  - url: json-schema/biconomy-quote-response-schema.json
-    type: JSONSchema
-  - url: json-structure/biconomy-supertransaction-structure.json
-    type: JSONStructure
-  - url: json-ld/biconomy-context.jsonld
-    type: JSONLD
-  - url: examples/biconomy-quote-eoa-7702-example.json
-    type: Example
-  - url: examples/biconomy-execute-example.json
-    type: Example
-  - type: NaftikoCapability
-    url: capabilities/supertransaction-quote.yaml
-  - type: NaftikoCapability
-    url: capabilities/supertransaction-execute.yaml
-  - type: NaftikoCapability
-    url: capabilities/supertransaction-orchestrator.yaml
-  description: The Biconomy Supertransaction API exposes the Modular Execution Environment (MEE) over a small
-    REST surface — POST /v1/quote composes a multichain execution plan and returns the signable payload(s) and
-    fee, and POST /v1/execute submits the signed supertransaction for cross-chain settlement. Three account
-    modes are supported - smart-account (Nexus / ERC-4337), eoa (MetaMask, Rabby, Trust funded by an explicit
-    fundingToken), and eoa-7702 (EIP-7702 set-code delegation for Privy / Dynamic / Turnkey embedded wallets).
-    Composable instruction types include intent-simple, intent, intent-vault (200+ DeFi vaults), build,
-    build-raw, and build-ccip.
-- aid: biconomy:biconomy-bundler-api
-  name: Biconomy Bundler API
-  tags:
-  - Account Abstraction
-  - ERC-4337
-  - Bundler
-  - UserOps
-  humanURL: https://github.com/bcnmy/bundler
-  properties:
-  - url: https://github.com/bcnmy/bundler
-    type: SourceCode
-  - url: https://docs.biconomy.io/contracts-and-audits/supported-chains
-    type: Documentation
-  description: Biconomy's open-source ERC-4337 TypeScript Bundler. Implements eth_sendUserOperation,
-    eth_estimateUserOperationGas, eth_getUserOperationByHash, eth_getUserOperationReceipt, and
-    eth_supportedEntryPoints across both EntryPoint v0.6.0 and v0.7.0. Hosted bundler endpoints are issued per
-    project from the Biconomy Dashboard.
-- aid: biconomy:biconomy-sponsorship-paymaster
-  name: Biconomy Sponsorship Paymaster
-  tags:
-  - Account Abstraction
-  - ERC-4337
-  - Paymaster
-  - Gas Sponsorship
-  - Gasless
-  humanURL: https://docs.biconomy.io/gasless-apps/sponsorship
-  properties:
-  - url: https://docs.biconomy.io/gasless-apps
-    type: Documentation
-  - url: https://docs.biconomy.io/gasless-apps/sponsorship
-    type: Documentation
-  - url: https://docs.biconomy.io/gasless-apps/testnet-sponsorship
-    type: Documentation
-  - url: https://docs.biconomy.io/gasless-apps/pay-in-tokens
-    type: Documentation
-  - url: https://github.com/bcnmy/biconomy-paymasters
-    type: SourceCode
-  - url: https://dashboard.biconomy.io
-    type: Dashboard
-  description: ERC-4337 paymaster service that fronts gas on behalf of end users so dApps can offer gasless
-    UX. Two modes — full sponsorship (developer pays gas, post-paid invoiced monthly) and pay-in-tokens (user
-    pays gas in ERC-20). All sponsorship limits (per-tx USD cap, per-user daily cap, allowed contracts, chain
-    whitelist) are configured per project in the Biconomy Dashboard and enforced before /v1/quote returns a
-    sponsored quote.
-- aid: biconomy:biconomy-nexus-smart-account
-  name: Biconomy Nexus Smart Account
-  tags:
-  - Account Abstraction
-  - ERC-4337
-  - ERC-7579
-  - Smart Accounts
-  - Modules
-  humanURL: https://github.com/bcnmy/nexus
-  properties:
-  - url: https://github.com/bcnmy/nexus
-    type: SourceCode
-  - url: https://github.com/bcnmy/nexus/wiki
-    type: Documentation
-  - url: https://docs.biconomy.io/contracts-and-audits
-    type: Documentation
-  - url: https://docs.biconomy.io/contracts-and-audits/supported-chains
-    type: Documentation
-  description: Nexus is Biconomy's ERC-7579 modular smart contract account, audited by CodeHawks-Cyfrin
-    (Sept 2024), Spearbit (Oct/Nov 2024), Zenith (Mar 2025), and Pashov (Mar 2025), and pre-deployed across
-    20+ EVM mainnets. Supports the four ERC-7579 module types (validator, executor, hook, fallback) and is
-    the underlying account implementation behind eoa-7702 mode of the MEE API.
-- aid: biconomy:biconomy-smart-sessions-api
-  name: Biconomy Smart Sessions API
-  tags:
-  - Account Abstraction
-  - Smart Sessions
-  - Agents
-  - Automation
-  - Policies
-  humanURL: https://docs.biconomy.io/agents-automation
-  properties:
-  - url: https://docs.biconomy.io/agents-automation
-    type: Documentation
-  - url: https://docs.biconomy.io/agents-automation/implementation
-    type: Documentation
-  - url: https://docs.biconomy.io/agents-automation/agent-types
-    type: Documentation
-  - url: https://docs.biconomy.io/agents-automation/policies
-    type: Documentation
-  - url: https://docs.biconomy.io/agents-automation/policies/sudo
-    type: Documentation
-  - url: https://docs.biconomy.io/agents-automation/policies/universal-action
-    type: Documentation
-  - url: https://docs.biconomy.io/agents-automation/policies/time-range
-    type: Documentation
-  - url: https://docs.biconomy.io/agents-automation/policies/usage-limit
-    type: Documentation
-  - url: https://docs.biconomy.io/sdk-reference/sessions
-    type: Documentation
-  - url: https://github.com/bcnmy/session-permissioned-intents
-    type: SourceCode
-  description: Smart Sessions is a delegated-execution framework layered on Nexus. A session key is granted
-    a scoped set of policies (Sudo, Universal Action, Time Range, Usage Limit) that bound what an agent or
-    automation can execute on behalf of the owner. Intended for agents, recurring automations, and
-    intent-flow access without re-prompting the owner for every transaction.
-- aid: biconomy:biconomy-abstractjs-sdk
-  name: Biconomy AbstractJS SDK
-  tags:
-  - SDK
-  - TypeScript
-  - Account Abstraction
-  - MEE
-  humanURL: https://docs.biconomy.io/overview/abstractjs
-  properties:
-  - url: https://docs.biconomy.io/overview/abstractjs
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/abstractjs/setup
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/abstractjs/composable-batching
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/abstractjs/cross-chain
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/abstractjs/conditional-execution
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/abstractjs/cleanup
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/abstractjs/estimating-gas
-    type: Documentation
-  - url: https://docs.biconomy.io/overview/abstractjs/batch-calls
-    type: Documentation
-  - url: https://docs.biconomy.io/sdk-reference
-    type: Documentation
-  - url: https://github.com/bcnmy/abstractjs
-    type: SourceCode
-  - url: https://www.npmjs.com/package/@biconomy/abstractjs
-    type: SDK
-  description: AbstractJS (@biconomy/abstractjs) is Biconomy's TypeScript-first SDK with a Viem-inspired API.
-    Wraps the Supertransaction API and Nexus smart account operations, exposing createMeeClient, getQuote,
-    executeQuote, and waitForSupertransactionReceipt helpers, plus composable instruction builders for
-    cross-chain orchestration, conditional execution, runtime balance injection, and cleanup.
+  - aid: biconomy:biconomy-supertransaction-api
+    name: Biconomy Supertransaction API
+    tags:
+      - Account Abstraction
+      - ERC-4337
+      - ERC-7702
+      - MEE
+      - Quotes
+      - Cross-Chain
+      - Gasless
+    humanURL: https://docs.biconomy.io/overview/supertransaction-api
+    baseURL: https://api.biconomy.io
+    properties:
+      - url: https://docs.biconomy.io/overview/supertransaction-api
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/supertransaction-api/get-quote
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/supertransaction-api/quote-eoa
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/supertransaction-api/quote-smart-account
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/supertransaction-api/quote-7702
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/supertransaction-api/sign-payload
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/supertransaction-api/execute
+        type: Documentation
+      - url: openapi/biconomy-supertransaction-api-openapi.yml
+        type: OpenAPI
+      - url: json-schema/biconomy-quote-request-schema.json
+        type: JSONSchema
+      - url: json-schema/biconomy-quote-response-schema.json
+        type: JSONSchema
+      - url: json-structure/biconomy-supertransaction-structure.json
+        type: JSONStructure
+      - url: json-ld/biconomy-context.jsonld
+        type: JSONLD
+      - url: examples/biconomy-quote-eoa-7702-example.json
+        type: Example
+      - url: examples/biconomy-execute-example.json
+        type: Example
+    description: >-
+      The Biconomy Supertransaction API exposes the Modular Execution Environment (MEE) over a small REST surface — POST
+      /v1/quote composes a multichain execution plan and returns the signable payload(s) and fee, and POST /v1/execute
+      submits the signed supertransaction for cross-chain settlement. Three account modes are supported - smart-account
+      (Nexus / ERC-4337), eoa (MetaMask, Rabby, Trust funded by an explicit fundingToken), and eoa-7702 (EIP-7702
+      set-code delegation for Privy / Dynamic / Turnkey embedded wallets). Composable instruction types include
+      intent-simple, intent, intent-vault (200+ DeFi vaults), build, build-raw, and build-ccip.
+  - aid: biconomy:biconomy-bundler-api
+    name: Biconomy Bundler API
+    tags:
+      - Account Abstraction
+      - ERC-4337
+      - Bundler
+      - UserOps
+    humanURL: https://github.com/bcnmy/bundler
+    properties:
+      - url: https://github.com/bcnmy/bundler
+        type: SourceCode
+      - url: https://docs.biconomy.io/contracts-and-audits/supported-chains
+        type: Documentation
+    description: >-
+      Biconomy's open-source ERC-4337 TypeScript Bundler. Implements eth_sendUserOperation,
+      eth_estimateUserOperationGas, eth_getUserOperationByHash, eth_getUserOperationReceipt, and
+      eth_supportedEntryPoints across both EntryPoint v0.6.0 and v0.7.0. Hosted bundler endpoints are issued per project
+      from the Biconomy Dashboard.
+  - aid: biconomy:biconomy-sponsorship-paymaster
+    name: Biconomy Sponsorship Paymaster
+    tags:
+      - Account Abstraction
+      - ERC-4337
+      - Paymaster
+      - Gas Sponsorship
+      - Gasless
+    humanURL: https://docs.biconomy.io/gasless-apps/sponsorship
+    properties:
+      - url: https://docs.biconomy.io/gasless-apps
+        type: Documentation
+      - url: https://docs.biconomy.io/gasless-apps/sponsorship
+        type: Documentation
+      - url: https://docs.biconomy.io/gasless-apps/testnet-sponsorship
+        type: Documentation
+      - url: https://docs.biconomy.io/gasless-apps/pay-in-tokens
+        type: Documentation
+      - url: https://github.com/bcnmy/biconomy-paymasters
+        type: SourceCode
+      - url: https://dashboard.biconomy.io
+        type: Dashboard
+    description: >-
+      ERC-4337 paymaster service that fronts gas on behalf of end users so dApps can offer gasless UX. Two modes — full
+      sponsorship (developer pays gas, post-paid invoiced monthly) and pay-in-tokens (user pays gas in ERC-20). All
+      sponsorship limits (per-tx USD cap, per-user daily cap, allowed contracts, chain whitelist) are configured per
+      project in the Biconomy Dashboard and enforced before /v1/quote returns a sponsored quote.
+  - aid: biconomy:biconomy-nexus-smart-account
+    name: Biconomy Nexus Smart Account
+    tags:
+      - Account Abstraction
+      - ERC-4337
+      - ERC-7579
+      - Smart Accounts
+      - Modules
+    humanURL: https://github.com/bcnmy/nexus
+    properties:
+      - url: https://github.com/bcnmy/nexus
+        type: SourceCode
+      - url: https://github.com/bcnmy/nexus/wiki
+        type: Documentation
+      - url: https://docs.biconomy.io/contracts-and-audits
+        type: Documentation
+      - url: https://docs.biconomy.io/contracts-and-audits/supported-chains
+        type: Documentation
+    description: >-
+      Nexus is Biconomy's ERC-7579 modular smart contract account, audited by CodeHawks-Cyfrin (Sept 2024), Spearbit
+      (Oct/Nov 2024), Zenith (Mar 2025), and Pashov (Mar 2025), and pre-deployed across 20+ EVM mainnets. Supports the
+      four ERC-7579 module types (validator, executor, hook, fallback) and is the underlying account implementation
+      behind eoa-7702 mode of the MEE API.
+  - aid: biconomy:biconomy-smart-sessions-api
+    name: Biconomy Smart Sessions API
+    tags:
+      - Account Abstraction
+      - Smart Sessions
+      - Agents
+      - Automation
+      - Policies
+    humanURL: https://docs.biconomy.io/agents-automation
+    properties:
+      - url: https://docs.biconomy.io/agents-automation
+        type: Documentation
+      - url: https://docs.biconomy.io/agents-automation/implementation
+        type: Documentation
+      - url: https://docs.biconomy.io/agents-automation/agent-types
+        type: Documentation
+      - url: https://docs.biconomy.io/agents-automation/policies
+        type: Documentation
+      - url: https://docs.biconomy.io/agents-automation/policies/sudo
+        type: Documentation
+      - url: https://docs.biconomy.io/agents-automation/policies/universal-action
+        type: Documentation
+      - url: https://docs.biconomy.io/agents-automation/policies/time-range
+        type: Documentation
+      - url: https://docs.biconomy.io/agents-automation/policies/usage-limit
+        type: Documentation
+      - url: https://docs.biconomy.io/sdk-reference/sessions
+        type: Documentation
+      - url: https://github.com/bcnmy/session-permissioned-intents
+        type: SourceCode
+    description: >-
+      Smart Sessions is a delegated-execution framework layered on Nexus. A session key is granted a scoped set of
+      policies (Sudo, Universal Action, Time Range, Usage Limit) that bound what an agent or automation can execute on
+      behalf of the owner. Intended for agents, recurring automations, and intent-flow access without re-prompting the
+      owner for every transaction.
+  - aid: biconomy:biconomy-abstractjs-sdk
+    name: Biconomy AbstractJS SDK
+    tags:
+      - SDK
+      - TypeScript
+      - Account Abstraction
+      - MEE
+    humanURL: https://docs.biconomy.io/overview/abstractjs
+    properties:
+      - url: https://docs.biconomy.io/overview/abstractjs
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/abstractjs/setup
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/abstractjs/composable-batching
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/abstractjs/cross-chain
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/abstractjs/conditional-execution
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/abstractjs/cleanup
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/abstractjs/estimating-gas
+        type: Documentation
+      - url: https://docs.biconomy.io/overview/abstractjs/batch-calls
+        type: Documentation
+      - url: https://docs.biconomy.io/sdk-reference
+        type: Documentation
+      - url: https://github.com/bcnmy/abstractjs
+        type: SourceCode
+      - url: https://www.npmjs.com/package/@biconomy/abstractjs
+        type: SDK
+    description: >-
+      AbstractJS (@biconomy/abstractjs) is Biconomy's TypeScript-first SDK with a Viem-inspired API. Wraps the
+      Supertransaction API and Nexus smart account operations, exposing createMeeClient, getQuote, executeQuote, and
+      waitForSupertransactionReceipt helpers, plus composable instruction builders for cross-chain orchestration,
+      conditional execution, runtime balance injection, and cleanup.
 name: Biconomy
 tags:
-- Account Abstraction
-- Blockchain
-- Bundler
-- Cross-Chain
-- DeFi
-- ERC-4337
-- ERC-7579
-- ERC-7702
-- Ethereum
-- Gas Abstraction
-- Gasless
-- MEE
-- Paymaster
-- Smart Accounts
-- Smart Sessions
-- Wallets
-- Web3
+  - Account Abstraction
+  - Blockchain
+  - Bundler
+  - Cross-Chain
+  - DeFi
+  - ERC-4337
+  - ERC-7579
+  - ERC-7702
+  - Ethereum
+  - Gas Abstraction
+  - Gasless
+  - MEE
+  - Paymaster
+  - Smart Accounts
+  - Smart Sessions
+  - Wallets
+  - Web3
 kind: contract
 image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 access: 3rd-Party
 common:
-- url: https://www.biconomy.io
-  name: Biconomy
-  type: Portal
-- url: https://docs.biconomy.io
-  name: Documentation
-  type: Documentation
-- url: https://docs.biconomy.io/llms.txt
-  name: LLMs.txt Index
-  type: Documentation
-- url: https://dashboard.biconomy.io
-  name: Biconomy Dashboard
-  type: Dashboard
-- url: https://meescan.biconomy.io
-  name: MEEScan Explorer
-  type: Explorer
-- url: https://github.com/bcnmy
-  name: bcnmy GitHub Organization
-  type: SourceCode
-- url: https://github.com/bcnmy/nexus
-  name: Nexus Smart Account
-  type: SourceCode
-- url: https://github.com/bcnmy/abstractjs
-  name: AbstractJS SDK
-  type: SourceCode
-- url: https://github.com/bcnmy/bundler
-  name: 4337 TypeScript Bundler
-  type: SourceCode
-- url: https://github.com/bcnmy/biconomy-paymasters
-  name: Biconomy Paymasters
-  type: SourceCode
-- url: https://github.com/bcnmy/mee-node
-  name: MEE Node
-  type: SourceCode
-- url: https://github.com/bcnmy/mee-contracts
-  name: MEE Contracts
-  type: SourceCode
-- url: https://github.com/bcnmy/stx-contracts
-  name: Cross-chain Supertransaction Contracts
-  type: SourceCode
-- url: https://github.com/bcnmy/erc8211-contracts
-  name: ERC-8211 Contracts
-  type: SourceCode
-- url: https://github.com/bcnmy/entry-point-gas-estimations
-  name: 4337 Gas Estimations SDK
-  type: SourceCode
-- url: https://github.com/bcnmy/session-permissioned-intents
-  name: Smart Sessions Intents Demo
-  type: SourceCode
-- url: https://github.com/bcnmy/awesome-biconomy
-  name: Awesome Biconomy
-  type: Documentation
-- url: https://www.npmjs.com/package/@biconomy/abstractjs
-  name: '@biconomy/abstractjs on npm'
-  type: SDK
-- url: https://docs.biconomy.io/sdk-reference
-  name: AbstractJS SDK Reference
-  type: Documentation
-- url: https://docs.biconomy.io/sdk-reference/account
-  name: Account Functions
-  type: Documentation
-- url: https://docs.biconomy.io/sdk-reference/client
-  name: Client Methods
-  type: Documentation
-- url: https://docs.biconomy.io/sdk-reference/instructions
-  name: Instructions
-  type: Documentation
-- url: https://docs.biconomy.io/sdk-reference/runtime
-  name: Runtime Functions
-  type: Documentation
-- url: https://docs.biconomy.io/sdk-reference/conditions
-  name: Conditions
-  type: Documentation
-- url: https://docs.biconomy.io/sdk-reference/sessions
-  name: Smart Sessions API
-  type: Documentation
-- url: https://docs.biconomy.io/sdk-reference/utilities
-  name: Utilities
-  type: Documentation
-- url: https://docs.biconomy.io/wallet-integrations
-  name: Wallet Integrations
-  type: Documentation
-- url: https://docs.biconomy.io/wallet-integrations/privy/api
-  name: Privy Integration
-  type: Documentation
-- url: https://docs.biconomy.io/wallet-integrations/turnkey/api
-  name: Turnkey Integration
-  type: Documentation
-- url: https://docs.biconomy.io/wallet-integrations/para/api
-  name: Para Integration
-  type: Documentation
-- url: https://docs.biconomy.io/wallet-integrations/external-wallets/api
-  name: External Wallets Integration
-  type: Documentation
-- url: https://docs.biconomy.io/swaps-trading
-  name: Swaps and Trading
-  type: Documentation
-- url: https://docs.biconomy.io/swaps-trading/gasless-swap
-  name: Gasless Swap
-  type: Documentation
-- url: https://docs.biconomy.io/swaps-trading/cross-chain-swap
-  name: Cross-Chain Swap
-  type: Documentation
-- url: https://docs.biconomy.io/swaps-trading/limit-order
-  name: Limit Orders
-  type: Documentation
-- url: https://docs.biconomy.io/zaps
-  name: Zaps (DeFi Vaults)
-  type: Documentation
-- url: https://docs.biconomy.io/agents-automation
-  name: Agents and Automation
-  type: Documentation
-- url: https://docs.biconomy.io/gasless-apps
-  name: Gasless Apps
-  type: Documentation
-- url: https://docs.biconomy.io/gasless-apps/sponsorship
-  name: Sponsorship
-  type: Documentation
-- url: https://docs.biconomy.io/gasless-apps/pay-in-tokens
-  name: Pay In Tokens
-  type: Documentation
-- url: https://docs.biconomy.io/contracts-and-audits
-  name: Contracts and Audits
-  type: Documentation
-- url: https://docs.biconomy.io/contracts-and-audits/supported-chains
-  name: Supported Chains
-  type: Documentation
-- url: https://www.biconomy.io/blog
-  name: Blog
-  type: Blog
-- url: https://x.com/biconomy
-  name: X / Twitter
-  type: Twitter
-- url: https://www.linkedin.com/company/biconomy
-  type: LinkedIn
-- url: https://discord.gg/biconomy
-  name: Discord
-  type: Support
-- url: plans/biconomy-plans-pricing.yml
-  name: Plans
-  type: Plans
-- url: rate-limits/biconomy-rate-limits.yml
-  name: Rate Limits
-  type: RateLimits
-- url: finops/biconomy-finops.yml
-  name: FinOps
-  type: FinOps
-- url: vocabulary/biconomy-vocabulary.yml
-  name: Vocabulary
-  type: Vocabulary
-- url: rules/biconomy-rules.yml
-  name: Spectral Rules
-  type: Rules
+  - url: https://www.biconomy.io
+    name: Biconomy
+    type: Portal
+  - url: https://docs.biconomy.io
+    name: Documentation
+    type: Documentation
+  - url: https://docs.biconomy.io/llms.txt
+    name: LLMs.txt Index
+    type: Documentation
+  - url: https://dashboard.biconomy.io
+    name: Biconomy Dashboard
+    type: Dashboard
+  - url: https://meescan.biconomy.io
+    name: MEEScan Explorer
+    type: Explorer
+  - url: https://github.com/bcnmy
+    name: bcnmy GitHub Organization
+    type: SourceCode
+  - url: https://github.com/bcnmy/nexus
+    name: Nexus Smart Account
+    type: SourceCode
+  - url: https://github.com/bcnmy/abstractjs
+    name: AbstractJS SDK
+    type: SourceCode
+  - url: https://github.com/bcnmy/bundler
+    name: 4337 TypeScript Bundler
+    type: SourceCode
+  - url: https://github.com/bcnmy/biconomy-paymasters
+    name: Biconomy Paymasters
+    type: SourceCode
+  - url: https://github.com/bcnmy/mee-node
+    name: MEE Node
+    type: SourceCode
+  - url: https://github.com/bcnmy/mee-contracts
+    name: MEE Contracts
+    type: SourceCode
+  - url: https://github.com/bcnmy/stx-contracts
+    name: Cross-chain Supertransaction Contracts
+    type: SourceCode
+  - url: https://github.com/bcnmy/erc8211-contracts
+    name: ERC-8211 Contracts
+    type: SourceCode
+  - url: https://github.com/bcnmy/entry-point-gas-estimations
+    name: 4337 Gas Estimations SDK
+    type: SourceCode
+  - url: https://github.com/bcnmy/session-permissioned-intents
+    name: Smart Sessions Intents Demo
+    type: SourceCode
+  - url: https://github.com/bcnmy/awesome-biconomy
+    name: Awesome Biconomy
+    type: Documentation
+  - url: https://www.npmjs.com/package/@biconomy/abstractjs
+    name: '@biconomy/abstractjs on npm'
+    type: SDK
+  - url: https://docs.biconomy.io/sdk-reference
+    name: AbstractJS SDK Reference
+    type: Documentation
+  - url: https://docs.biconomy.io/sdk-reference/account
+    name: Account Functions
+    type: Documentation
+  - url: https://docs.biconomy.io/sdk-reference/client
+    name: Client Methods
+    type: Documentation
+  - url: https://docs.biconomy.io/sdk-reference/instructions
+    name: Instructions
+    type: Documentation
+  - url: https://docs.biconomy.io/sdk-reference/runtime
+    name: Runtime Functions
+    type: Documentation
+  - url: https://docs.biconomy.io/sdk-reference/conditions
+    name: Conditions
+    type: Documentation
+  - url: https://docs.biconomy.io/sdk-reference/sessions
+    name: Smart Sessions API
+    type: Documentation
+  - url: https://docs.biconomy.io/sdk-reference/utilities
+    name: Utilities
+    type: Documentation
+  - url: https://docs.biconomy.io/wallet-integrations
+    name: Wallet Integrations
+    type: Documentation
+  - url: https://docs.biconomy.io/wallet-integrations/privy/api
+    name: Privy Integration
+    type: Documentation
+  - url: https://docs.biconomy.io/wallet-integrations/turnkey/api
+    name: Turnkey Integration
+    type: Documentation
+  - url: https://docs.biconomy.io/wallet-integrations/para/api
+    name: Para Integration
+    type: Documentation
+  - url: https://docs.biconomy.io/wallet-integrations/external-wallets/api
+    name: External Wallets Integration
+    type: Documentation
+  - url: https://docs.biconomy.io/swaps-trading
+    name: Swaps and Trading
+    type: Documentation
+  - url: https://docs.biconomy.io/swaps-trading/gasless-swap
+    name: Gasless Swap
+    type: Documentation
+  - url: https://docs.biconomy.io/swaps-trading/cross-chain-swap
+    name: Cross-Chain Swap
+    type: Documentation
+  - url: https://docs.biconomy.io/swaps-trading/limit-order
+    name: Limit Orders
+    type: Documentation
+  - url: https://docs.biconomy.io/zaps
+    name: Zaps (DeFi Vaults)
+    type: Documentation
+  - url: https://docs.biconomy.io/agents-automation
+    name: Agents and Automation
+    type: Documentation
+  - url: https://docs.biconomy.io/gasless-apps
+    name: Gasless Apps
+    type: Documentation
+  - url: https://docs.biconomy.io/gasless-apps/sponsorship
+    name: Sponsorship
+    type: Documentation
+  - url: https://docs.biconomy.io/gasless-apps/pay-in-tokens
+    name: Pay In Tokens
+    type: Documentation
+  - url: https://docs.biconomy.io/contracts-and-audits
+    name: Contracts and Audits
+    type: Documentation
+  - url: https://docs.biconomy.io/contracts-and-audits/supported-chains
+    name: Supported Chains
+    type: Documentation
+  - url: https://www.biconomy.io/blog
+    name: Blog
+    type: Blog
+  - url: https://x.com/biconomy
+    name: X / Twitter
+    type: Twitter
+  - url: https://www.linkedin.com/company/biconomy
+    type: LinkedIn
+  - url: https://discord.gg/biconomy
+    name: Discord
+    type: Support
+  - url: plans/biconomy-plans-pricing.yml
+    name: Plans
+    type: Plans
+  - url: rate-limits/biconomy-rate-limits.yml
+    name: Rate Limits
+    type: RateLimits
+  - url: finops/biconomy-finops.yml
+    name: FinOps
+    type: FinOps
+  - url: vocabulary/biconomy-vocabulary.yml
+    name: Vocabulary
+    type: Vocabulary
+  - url: rules/biconomy-rules.yml
+    name: Spectral Rules
+    type: Rules
 include: []
 maintainers:
-- FN: Biconomy
-  url: https://www.biconomy.io
-  email: support@biconomy.io
+  - FN: Biconomy
+    url: https://www.biconomy.io
+    email: support@biconomy.io
 overlays:
-- type: APIs.io Search
-  url: overlays/biconomy-apis-io-search.yml
-- type: APIs.json Properties
-  url: overlays/biconomy-apis-json-properties.yml
+  - type: APIs.io Search
+    url: overlays/biconomy-apis-io-search.yml
+  - type: APIs.json Properties
+    url: overlays/biconomy-apis-json-properties.yml
 specificationVersion: '0.18'

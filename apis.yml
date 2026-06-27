@@ -39,9 +39,9 @@ apis:
       - url: json-ld/biconomy-context.jsonld
         type: JSONLD
       - url: examples/biconomy-quote-eoa-7702-example.json
-        type: Example
+        type: Examples
       - url: examples/biconomy-execute-example.json
-        type: Example
+        type: Examples
     description: >-
       The Biconomy Supertransaction API exposes the Modular Execution Environment (MEE) over a small REST surface — POST
       /v1/quote composes a multichain execution plan and returns the signable payload(s) and fee, and POST /v1/execute
@@ -182,7 +182,7 @@ apis:
       - url: https://github.com/bcnmy/abstractjs
         type: SourceCode
       - url: https://www.npmjs.com/package/@biconomy/abstractjs
-        type: SDK
+        type: SDKs
     description: >-
       AbstractJS (@biconomy/abstractjs) is Biconomy's TypeScript-first SDK with a Viem-inspired API. Wraps the
       Supertransaction API and Nexus smart account operations, exposing createMeeClient, getQuote, executeQuote, and
@@ -264,7 +264,7 @@ common:
     type: Documentation
   - url: https://www.npmjs.com/package/@biconomy/abstractjs
     name: '@biconomy/abstractjs on npm'
-    type: SDK
+    type: SDKs
   - url: https://docs.biconomy.io/sdk-reference
     name: AbstractJS SDK Reference
     type: Documentation

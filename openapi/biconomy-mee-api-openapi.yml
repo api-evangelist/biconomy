@@ -1,0 +1,166 @@
+openapi: 3.1.0
+info:
+  title: Supertransaction instructions mee API
+  version: 0.4.0
+  description: A comprehensive Supertransaction API documentation
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: https://api.biconomy.io
+  description: Production server
+- url: https://api-staging.biconomy.io
+  description: Staging server
+security:
+- ApiKeyAuth: []
+tags:
+- name: mee
+paths:
+  /v1/mee/orchestrator:
+    post:
+      description: Get orchestrator addresses for the specified owner on requested chains
+      summary: Get orchestrator addresses
+      tags:
+      - mee
+      parameters: []
+      operationId: getOrchestrator
+      requestBody:
+        description: Body
+        content:
+          application/json:
+            schema:
+              description: Request schema for getting orchestrator addresses on specified chains
+              type: object
+              properties:
+                ownerAddress:
+                  description: EOA wallet address which is used as owner of the orchestrator account
+                  type: string
+                  example: '0x0a7C906832544293a6018bA25280c7f7b0Bbf120'
+                chains:
+                  description: List of unique chain IDs where orchestrator addresses are needed
+                  example:
+                  - 1
+                  - 137
+                  - 10
+                  - 8453
+                  minItems: 1
+                  type: array
+                  items:
+                    description: Chain ID where orchestrator address is needed
+                    type: number
+                    example: 8453
+              required:
+              - ownerAddress
+              - chains
+              additionalProperties: false
+      responses:
+        '200':
+          description: Response schema containing orchestrator addresses grouped by chains
+          content:
+            application/json:
+              schema:
+                description: Response schema containing orchestrator addresses grouped by chains
+                example:
+                - address: '0x4b19129EA58431A06D01054f69AcAe5de50633b6'
+                  chains:
+                  - '1'
+                  - '10'
+                - address: '0xD5Fe79C09CDF3D279cD87B5CAdC77517D65274ca'
+                  chains:
+                  - '137'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      description: Orchestrator address
+                      type: string
+                      example: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'
+                    chains:
+                      description: List of chain IDs that share this orchestrator address
+                      example:
+                      - '1'
+                      - '10'
+                      - '137'
+                      type: array
+                      items:
+                        type: string
+                  required:
+                  - address
+                  - chains
+                  additionalProperties: false
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        path:
+                          type: array
+                          items:
+                            type: string
+                        message:
+                          type: string
+                      required:
+                      - code
+                      - path
+                      - message
+                      additionalProperties: false
+                required:
+                - code
+                - message
+                - errors
+                additionalProperties: false
+        '500':
+          description: '500'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        path:
+                          type: array
+                          items:
+                            type: string
+                        message:
+                          type: string
+                      required:
+                      - code
+                      - path
+                      - message
+                      additionalProperties: false
+                required:
+                - code
+                - message
+                - errors
+                additionalProperties: false
+components:
+  securitySchemes:
+    X-API-Key:
+      type: apiKey
+      name: X-API-Key
+      in: header
+      description: 'API Key required to access Supertransaction API. Example: mee_2w3mXCuyt4xVXDRCZ5k5Lhgs'

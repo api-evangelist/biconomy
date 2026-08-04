@@ -1,0 +1,18 @@
+{
+  "provider": "biconomy",
+  "sources": [
+    "biconomy-instructions-api-openapi.yml",
+    "biconomy-mee-api-openapi.yml",
+    "biconomy-root-api-openapi.yml"
+  ],
+  "outputs": [
+    "biconomy-instructions-api-openapi.yml",
+    "biconomy-mee-api-openapi.yml",
+    "biconomy-root-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

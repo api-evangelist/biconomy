@@ -452,4 +452,4 @@ overlays:
     url: overlays/biconomy-apis-io-search.yml
   - type: APIs.json Properties
     url: overlays/biconomy-apis-json-properties.yml
-specificationVersion: '0.18'
+specificationVersion: '0.23'

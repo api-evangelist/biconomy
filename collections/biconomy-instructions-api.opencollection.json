@@ -1,0 +1,60 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Supertransaction instructions API",
+    "version": "0.4.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "instructions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Build Hyperliquid deposit instructions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.biconomy.io/v1/instructions/hyperliquid/deposit",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Build instructions for depositing USDC from Arbitrum to Hyperliquid"
+        },
+        {
+          "info": {
+            "name": "Build CCIP token bridge instructions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.biconomy.io/v1/instructions/build-ccip",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Build CCIP token bridge instructions for your supertransaction"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

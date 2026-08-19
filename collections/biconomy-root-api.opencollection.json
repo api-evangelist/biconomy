@@ -1,0 +1,60 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Supertransaction instructions root API",
+    "version": "0.4.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "root",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Compose instructions and generate a quote",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.biconomy.io/v1/quote",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Compose instructions and retrieve a MEE quote in a single request."
+        },
+        {
+          "info": {
+            "name": "Submit the supertransaction for execution",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.biconomy.io/v1/execute",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "apikey",
+              "key": "X-API-Key",
+              "value": "{{X-API-Key}}",
+              "placement": "header"
+            }
+          },
+          "docs": "Submit the signed supertransaction quote for the execution where multichain composable and async execution happens via MEE nodes"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

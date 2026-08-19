@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Supertransaction instructions mee API",
+    "version": "0.4.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "mee",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get orchestrator addresses",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.biconomy.io/v1/mee/orchestrator",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Get orchestrator addresses for the specified owner on requested chains"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

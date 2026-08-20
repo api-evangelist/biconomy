@@ -146,6 +146,8 @@ apis:
   humanURL: https://docs.biconomy.io/overview/supertransaction-api
   baseURL: https://api.biconomy.io
   tags:
+  - Instructions
+  tags_raw:
   - instructions
   properties:
   - type: OpenAPI
@@ -182,6 +184,8 @@ apis:
   humanURL: https://docs.biconomy.io/overview/supertransaction-api
   baseURL: https://api.biconomy.io
   tags:
+  - MEE
+  tags_raw:
   - mee
   properties:
   - type: OpenAPI
@@ -218,6 +222,8 @@ apis:
   humanURL: https://docs.biconomy.io/overview/supertransaction-api
   baseURL: https://api.biconomy.io
   tags:
+  - Root
+  tags_raw:
   - root
   properties:
   - type: OpenAPI

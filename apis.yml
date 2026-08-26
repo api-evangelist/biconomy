@@ -152,6 +152,18 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/biconomy-instructions-api-openapi.yml
+  - type: Overlay
+    url: overlays/biconomy-instructions-api-overlay.yaml
+  - type: Postman
+    url: collections/biconomy-instructions-api.postman_collection.json
+  - type: OpenCollection
+    url: collections/biconomy-instructions-api.opencollection.json
+  - type: ErrorCatalog
+    url: errors/biconomy-problem-types.yml
+  - type: Conventions
+    url: conventions/biconomy-conventions.yml
+  - type: DataModel
+    url: data-model/biconomy-data-model.yml
   - type: Documentation
     url: https://docs.biconomy.io/overview/supertransaction-api
   - type: Documentation
@@ -190,6 +202,18 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/biconomy-mee-api-openapi.yml
+  - type: Overlay
+    url: overlays/biconomy-mee-api-overlay.yaml
+  - type: Postman
+    url: collections/biconomy-mee-api.postman_collection.json
+  - type: OpenCollection
+    url: collections/biconomy-mee-api.opencollection.json
+  - type: ErrorCatalog
+    url: errors/biconomy-problem-types.yml
+  - type: Conventions
+    url: conventions/biconomy-conventions.yml
+  - type: DataModel
+    url: data-model/biconomy-data-model.yml
   - type: Documentation
     url: https://docs.biconomy.io/overview/supertransaction-api
   - type: Documentation
@@ -228,6 +252,18 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/biconomy-root-api-openapi.yml
+  - type: Overlay
+    url: overlays/biconomy-root-api-overlay.yaml
+  - type: Postman
+    url: collections/biconomy-root-api.postman_collection.json
+  - type: OpenCollection
+    url: collections/biconomy-root-api.opencollection.json
+  - type: ErrorCatalog
+    url: errors/biconomy-problem-types.yml
+  - type: Conventions
+    url: conventions/biconomy-conventions.yml
+  - type: DataModel
+    url: data-model/biconomy-data-model.yml
   - type: Documentation
     url: https://docs.biconomy.io/overview/supertransaction-api
   - type: Documentation
@@ -254,7 +290,77 @@ apis:
     url: examples/biconomy-quote-eoa-7702-example.json
   - type: Examples
     url: examples/biconomy-execute-example.json
+- aid: biconomy:biconomy-dashboard-public-api
+  name: Biconomy Dashboard Public API
+  humanURL: https://docs.biconomy.io/overview/supertransaction-api/history-and-costs
+  baseURL: https://dashboard.biconomy.io
+  tags:
+  - MEE
+  - Reporting
+  - Cost Accounting
+  - Account Abstraction
+  properties:
+  - type: Documentation
+    url: https://docs.biconomy.io/overview/supertransaction-api/history-and-costs
+  - type: Authentication
+    url: authentication/biconomy-authentication.yml
+  - type: Conventions
+    url: conventions/biconomy-conventions.yml
+  description: >-
+    GET /api/public/projects/me/supertransactions returns a project's full supertransaction
+    history for reporting, reconciliation and gas-spend accounting. Each item carries the
+    supertransaction hash, execution status, chain ids and payment details (fee token, gas fee,
+    amounts). Authenticated with the project API key in a lowercase x-api-key header. This is the
+    only Biconomy surface with a collection and the only one with pagination: query parameters
+    lowerBound, upperBound, executedOnly, limit, cursor and before drive cursor pagination, and
+    responses carry a pagination object of {limit, hasNextPage, nextCursor}. It appears in no
+    published OpenAPI — it is documented only in prose at the history-and-costs page — so it is
+    registered here as a documented-but-unspecified surface.
+- aid: biconomy:biconomy-mee-explorer-api
+  name: Biconomy MEE Explorer API
+  humanURL: https://docs.biconomy.io/overview/supertransaction-api/execute
+  baseURL: https://network.biconomy.io
+  tags:
+  - MEE
+  - Explorer
+  - Transaction Status
+  - Account Abstraction
+  properties:
+  - type: Documentation
+    url: https://docs.biconomy.io/overview/supertransaction-api/execute
+  - type: Documentation
+    url: https://docs.biconomy.io/llms.txt
+  - type: Authentication
+    url: authentication/biconomy-authentication.yml
+  - type: Explorer
+    url: https://meescan.biconomy.io
+  description: >-
+    Status and tracking surface for a submitted supertransaction. GET /v1/explorer/{supertxHash}
+    returns the terminal execution state (SUCCESS, FAILED) with execution details, authenticated
+    with the same dashboard-issued key sent as an Authorization Bearer token rather than in
+    X-API-Key. It is the necessary companion to POST /v1/execute, whose 200 means accepted rather
+    than completed. Recorded here because it is a distinct host and a distinct auth convention
+    from api.biconomy.io, and because it is documented only in llms.txt and the execute guide —
+    it appears in no published OpenAPI. Probed unauthenticated 2026-08-24: HTTP 401 with
+    {"errors":["API key required..."]}, which confirms the host and the gate but leaves the
+    response schema unmeasured. The human-readable equivalent is https://meescan.biconomy.io.
 name: Biconomy
+created: '2026-05-25'
+modified: '2026-08-24'
+description: >-
+  Biconomy is the onchain orchestration layer for multi-chain applications, founded in 2019 and
+  headquartered in Singapore. Its Modular Execution Environment (MEE) composes multi-step,
+  cross-chain blockchain workflows — swaps, bridges, DeFi vault deposits, arbitrary contract calls
+  — into a single user signature across 20+ EVM mainnets, handling sequencing, runtime parameter
+  injection, bridge timing, gas abstraction, simulation-based async execution and failure recovery
+  on the developer's behalf. The commercial surface is a REST Supertransaction API
+  (POST /v1/quote, POST /v1/execute) plus the TypeScript AbstractJS SDK, both sitting on the same
+  engine and the same project API key. Underneath, Biconomy ships open-source account-abstraction
+  infrastructure: an ERC-4337 bundler, ERC-4337 paymasters for gas sponsorship and pay-in-token
+  flows, and Nexus, an ERC-7579 modular smart account audited by Cyfrin, Spearbit, Zenith and
+  Pashov. Smart Sessions layers scoped, time-limited, revocable on-chain delegation on top, which
+  is how AI agents and automations transact on a user's behalf without holding their key. Biconomy
+  also authored ERC-8211 for composable batching.
 tags:
   - Account Abstraction
   - Blockchain
@@ -325,9 +431,6 @@ common:
     type: SourceCode
   - url: https://github.com/bcnmy/biconomy-paymasters
     name: Biconomy Paymasters
-    type: SourceCode
-  - url: https://github.com/bcnmy/mee-node
-    name: MEE Node
     type: SourceCode
   - url: https://github.com/bcnmy/mee-contracts
     name: MEE Contracts
@@ -422,9 +525,12 @@ common:
   - url: https://docs.biconomy.io/contracts-and-audits/supported-chains
     name: Supported Chains
     type: Documentation
-  - url: https://www.biconomy.io/blog
+  - url: https://blog.biconomy.io
     name: Blog
     type: Blog
+  - url: https://blog.biconomy.io/rss/
+    name: Blog RSS
+    type: BlogRSS
   - url: https://x.com/biconomy
     name: X / Twitter
     type: Twitter
@@ -448,14 +554,84 @@ common:
   - url: rules/biconomy-rules.yml
     name: Spectral Rules
     type: Rules
+  - url: packages/biconomy-packages.yml
+    name: Client Packages
+    type: Packages
+  - url: packages/biconomy-packages.yml
+    name: Official SDKs
+    type: SDKs
+  - url: well-known/biconomy-well-known.yml
+    name: Well-Known Documents
+    type: WellKnown
+  - url: mcp/biconomy-mcp.yml
+    name: Biconomy Docs MCP Server
+    type: MCPServer
+  - url: mcp/biconomy-tool-crosswalk.yml
+    name: MCP to REST Tool Crosswalk
+    type: ToolCrosswalk
+  - url: a2a/biconomy-a2a.yml
+    name: A2A Agent Card
+    type: AgentCard
+  - url: llms/biconomy-llms.txt
+    name: LLMs.txt
+    type: LLMsTxt
+  - url: skills/_index.yml
+    name: Agent Skills
+    type: AgentSkill
+  - url: conformance/biconomy-conformance.yml
+    name: Standards Conformance
+    type: Conformance
+  - url: errors/biconomy-problem-types.yml
+    name: Error Catalog
+    type: ErrorCatalog
+  - url: lifecycle/biconomy-lifecycle.yml
+    name: Lifecycle and Versioning
+    type: Lifecycle
+  - url: lifecycle/biconomy-lifecycle.yml
+    name: Deprecation and Migration Policy
+    type: Deprecation
+  - url: conventions/biconomy-conventions.yml
+    name: API Conventions and Reversibility
+    type: Conventions
+  - url: sandbox/biconomy-sandbox.yml
+    name: Testnets and Simulation
+    type: Sandbox
+  - url: changelog/biconomy-changelog.yml
+    name: Change Log
+    type: ChangeLog
+  - url: data-model/biconomy-data-model.yml
+    name: Data Model
+    type: DataModel
+  - url: https://docs.biconomy.io/mcp
+    name: Biconomy Docs MCP endpoint
+    type: MCPServer
+  - url: https://docs.biconomy.io/.well-known/agent-card.json
+    name: Published A2A Agent Card
+    type: AgentCard
+  - url: https://docs.biconomy.io/overview/introduction
+    name: Getting Started
+    type: GettingStarted
+  - url: https://docs.biconomy.io/overview/supertransaction-api
+    name: API Reference
+    type: APIReference
+  - url: https://docs.biconomy.io
+    name: Developer Portal
+    type: DeveloperPortal
+  - url: https://github.com/bcnmy
+    name: bcnmy on GitHub
+    type: GitHubOrganization
+  - url: https://docs.biconomy.io/supertransaction-api/openapi.yaml
+    name: Published OpenAPI (docs host)
+    type: OpenAPI
 include: []
 maintainers:
   - FN: Biconomy
     url: https://www.biconomy.io
     email: support@biconomy.io
-overlays:
-  - type: APIs.io Search
-    url: overlays/biconomy-apis-io-search.yml
-  - type: APIs.json Properties
-    url: overlays/biconomy-apis-json-properties.yml
+overlays: []
 specificationVersion: '0.23'
+x-enrichment:
+  date: '2026-08-24'
+  status: enriched
+  artifacts_added: 29
+  pass: local-v1

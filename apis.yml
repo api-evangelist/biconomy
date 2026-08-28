@@ -345,6 +345,19 @@ apis:
     {"errors":["API key required..."]}, which confirms the host and the gate but leaves the
     response schema unmeasured. The human-readable equivalent is https://meescan.biconomy.io.
 name: Biconomy
+deliveryModel:
+  model: unknown
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-unlicensed
+  generated: '2026-08-28'
+  method: derived
 created: '2026-05-25'
 modified: '2026-08-24'
 description: >-

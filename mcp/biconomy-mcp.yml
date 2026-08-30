@@ -1,0 +1,104 @@
+generated: '2026-08-24'
+method: probed
+source: >-
+  Live MCP tools/list against https://docs.biconomy.io/mcp on 2026-08-24 — unauthenticated
+  JSON-RPC POST, HTTP 200, text/event-stream, three tools returned with full inputSchema.
+  Raw response saved to mcp/biconomy-mcp-tools.json.
+provider: Biconomy
+providerId: biconomy
+name: Biconomy Docs MCP
+status: live
+description: >-
+  Biconomy runs a hosted, anonymous-access MCP server on its documentation host. It is a
+  DOCUMENTATION server, not an execution server: the three tools search, browse and give feedback
+  on the docs corpus. None of them call the Supertransaction API — an agent can learn how to
+  compose a supertransaction through MCP, but must then call POST /v1/quote and POST /v1/execute
+  over REST with an X-API-Key. That gap is mapped in mcp/biconomy-tool-crosswalk.yml.
+deployment:
+  mode: remote
+  endpoint: https://docs.biconomy.io/mcp
+  auth: none
+  verified: probed
+  transport: streamable-http
+  note: >-
+    POST with Accept "application/json, text/event-stream" returns 200 and a text/event-stream
+    body carrying the JSON-RPC result. https://docs.biconomy.io/mcp/ 308-redirects to /mcp.
+    /sse on the same host answers 405, so the streamable-HTTP transport is the only binding.
+    No stdio package is published — searched npm for a @biconomy MCP package and found none, so
+    there is nothing to npx. mcp.biconomy.io does not resolve; api.biconomy.io/mcp returns 404.
+x-evidence:
+  fetched: '2026-08-24'
+  url: https://docs.biconomy.io/mcp
+  method: POST
+  jsonrpc_method: tools/list
+  http_status: 200
+  content_type: text/event-stream
+  tools_returned: 3
+  auth_challenge: none
+tools:
+  - name: search_biconomy_docs
+    title: Search documentation
+    category: documentation
+    description: >-
+      Search across the Biconomy Docs knowledge base to find relevant information, code examples,
+      API references and guides.
+    input_schema:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          description: Search query
+      additionalProperties: false
+  - name: query_docs_filesystem_biconomy_docs
+    category: documentation
+    description: >-
+      Read-only shell-like query against a virtualized, in-memory filesystem containing ONLY the
+      Biconomy Docs pages and OpenAPI specs. Supports rg, tree, head and similar read commands.
+      It is not a shell on any real machine.
+    input_schema:
+      type: object
+      required: [command]
+      properties:
+        command:
+          type: string
+          description: >-
+            A shell command to run against the virtualized documentation filesystem
+            (e.g. `rg -il "keyword" /`, `tree / -L 2`, `head -80 /path/file.mdx`).
+      additionalProperties: false
+    note: >-
+      This tool exposes the docs OpenAPI specs to an agent as files, which is a second,
+      indirect discovery route to the Supertransaction contract.
+  - name: submit_feedback
+    title: Submit documentation feedback
+    category: feedback
+    description: >-
+      Report a problem with a documentation page — incorrect, outdated, confusing, incomplete or
+      a broken example — to the docs team.
+    input_schema:
+      type: object
+      required: [path, feedback]
+      properties:
+        path:
+          type: string
+          minLength: 1
+          description: The documentation page path the feedback is about.
+        feedback:
+          type: string
+          minLength: 1
+          description: A clear description of the documentation issue or suggestion.
+      additionalProperties: false
+coverage:
+  tools_total: 3
+  tools_calling_the_api: 0
+  api_operations_total: 6
+  api_operations_exposed_as_tools: 0
+gaps:
+  - >-
+    No MCP tool reaches the Supertransaction API. Quote composition, execution, orchestrator
+    lookup, account upgrade and the instruction builders are all REST-only. An agent wanting to
+    transact must leave MCP and hand-roll HTTP with a dashboard-issued X-API-Key.
+  - >-
+    The server is unauthenticated and therefore carries no identity — there is no OAuth
+    authorization-server metadata and no protected-resource metadata on the host (both probed,
+    404), so an MCP client cannot bind a user to a Biconomy project through this server.

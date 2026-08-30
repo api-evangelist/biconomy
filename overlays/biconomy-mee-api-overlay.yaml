@@ -1,0 +1,60 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enrichment overlay — Biconomy mee API
+  version: 1.0.0
+extends: ../openapi/biconomy-mee-api-openapi.yml
+x-provenance:
+  generated: '2026-08-24'
+  method: generated
+  source: >-
+    API Evangelist enrichment pass 2026-08-24. Captures descriptive and contact metadata absent
+    from Biconomy's published contract, plus the runtime semantics recorded in
+    conventions/biconomy-conventions.yml and errors/biconomy-problem-types.yml. Applied as an
+    OpenAPI Overlay so the published spec at
+    https://docs.biconomy.io/supertransaction-api/openapi.yaml stays byte-faithful in openapi/.
+actions:
+  - target: $.info
+    description: Add the contact and terms metadata the published spec omits.
+    update:
+      contact:
+        name: Biconomy
+        url: https://docs.biconomy.io
+        email: support@biconomy.io
+      x-documentation: https://docs.biconomy.io/overview/supertransaction-api
+      x-llms-txt: https://docs.biconomy.io/llms.txt
+      x-mcp-server: https://docs.biconomy.io/mcp
+  - target: $.info
+    description: >-
+      Record that the API accepts no idempotency key, that execution is irreversible once
+      settled, and that quotes expire in roughly 30 seconds.
+    update:
+      x-idempotency: none
+      x-reversibility: >-
+        No reversal operation exists after /v1/execute settles. Reversal machinery is
+        pre-commitment only: cleanUps, upperBoundTimestamp, simulate, and Smart Session
+        revocation. See conventions/biconomy-conventions.yml.
+      x-quote-ttl-seconds: 30
+  - target: $.components.securitySchemes['X-API-Key']
+    description: Record where the credential is issued and its published prefix.
+    update:
+      x-issuance-url: https://dashboard.biconomy.io
+      x-key-prefix: mee_
+      x-scope: project
+  - target: $.servers
+    description: Mark which declared server is production and which is staging-with-no-published-contract.
+    update:
+      - url: https://api.biconomy.io
+        description: Production server
+        x-environment: production
+      - url: https://api-staging.biconomy.io
+        description: Staging server
+        x-environment: staging
+        x-note: >-
+          Declared in the contract but described nowhere in Biconomy's prose documentation.
+  - target: $.paths.*.post.responses['500']
+    description: Warn that 500 is not blind-retriable on write operations absent an idempotency key.
+    update:
+      x-retry-guidance: >-
+        Safe to retry composition calls. Do not blind-retry /v1/execute — no idempotency key
+        exists, so a retry after a request that actually landed can double-execute. Poll
+        https://network.biconomy.io/v1/explorer/{supertxHash} first.

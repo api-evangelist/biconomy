@@ -1,0 +1,206 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  Read from the published contract (openapi/biconomy-root-api-openapi.yml,
+  openapi/biconomy-mee-api-openapi.yml, openapi/biconomy-instructions-api-openapi.yml, and the
+  live specs at https://docs.biconomy.io/supertransaction-api/openapi.yaml and
+  https://www.biconomy.io/openapi.json) plus the published guides at
+  https://docs.biconomy.io/overview/supertransaction-api/{get-quote,sign-payload,execute},
+  /overview/abstractjs/{cleanup,conditional-execution}, /agents-automation/policies/* and the
+  644 KB llms-full.txt corpus. Probed 2026-08-24.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  Cross-cutting runtime semantics for the Biconomy Supertransaction API. The shape of this API is
+  unusual and worth stating plainly: every operation is a POST, there are no collections, no
+  resource GETs and no identifiers to fetch by. State does not live in Biconomy — it lives on
+  chain. That removes whole categories of convention (pagination, sparse fields, conditional
+  requests, ETags) and concentrates the risk in one place: /v1/execute is a single irreversible
+  write with no idempotency key.
+auth:
+  style: api-key-header
+  header: X-API-Key
+  host: https://api.biconomy.io
+  issuance: Project-scoped, issued from https://dashboard.biconomy.io
+  key_prefix: mee_
+  secondary:
+    - host: https://network.biconomy.io
+      style: bearer
+      header: Authorization
+      note: >-
+        The explorer/status surface takes the same key as a Bearer token rather than in
+        X-API-Key. Two hosts, two auth conventions, one credential.
+  oauth: false
+  detail: See authentication/biconomy-authentication.yml.
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  finding: >-
+    No idempotency key of any kind. The string "idempot" does not appear anywhere in the 644 KB
+    published documentation corpus, and no request schema in any published spec declares such a
+    field or header. This is the highest-consequence gap on the API: POST /v1/execute submits a
+    signed supertransaction that moves user funds, and a client that times out has no safe retry.
+  workaround_available: true
+  workaround: >-
+    Poll GET https://network.biconomy.io/v1/explorer/{supertxHash} before retrying. The supertx
+    hash is deterministic for a given signed quote, so a resubmission of the same signed quote is
+    identifiable after the fact — but the API offers no way to make the retry itself safe.
+pagination:
+  supported: true
+  scope: dashboard-public-api-only
+  style: cursor
+  surface: GET https://dashboard.biconomy.io/api/public/projects/me/supertransactions
+  params:
+    cursor: 'cursor=true enables cursor pagination'
+    page_size: limit
+    cursor_value: before
+    window_start: lowerBound
+    window_end: upperBound
+    filter: executedOnly
+  response_fields:
+    envelope: data
+    pagination: '{ limit, hasNextPage, nextCursor }'
+  loop: >-
+    While pagination.hasNextPage is true, repeat the request with &before=<nextCursor>. When it is
+    false the requested window is fully covered.
+  docs: https://docs.biconomy.io/overview/supertransaction-api/history-and-costs
+  detail: >-
+    Pagination exists on exactly one Biconomy surface, and it is not the one in the OpenAPI. The
+    six specified operations on api.biconomy.io are all single-object POST calls with no
+    collection to page. The Dashboard Public API on dashboard.biconomy.io is the sole collection
+    endpoint — and it appears in no published spec, so its cursor convention is discoverable only
+    from prose documentation. Note also that it takes the key in a LOWERCASE x-api-key header,
+    a third auth spelling alongside X-API-Key on api.biconomy.io and Authorization Bearer on
+    network.biconomy.io.
+field_expansion:
+  supported: false
+  detail: >-
+    No expand/fields/include parameter. Response shape is fixed per operation. The nearest
+    equivalent is `simulate` on /v1/quote, which adds simulation output rather than expanding
+    a relation.
+metadata:
+  supported: false
+  detail: >-
+    No customer-defined metadata field on any request schema. There is no way to attach a
+    client-side correlation object to a quote or an execution.
+request_id_tracing:
+  supported: false
+  header: null
+  detail: >-
+    No X-Request-Id, correlation-id or trace header is documented on requests or responses. The
+    only durable handle a client gets is `supertxHash` from the /v1/execute response, which
+    exists only after execution is accepted — a failed quote leaves nothing to quote back to
+    support.
+versioning:
+  in_transport: /v1 path prefix only
+  detail: See lifecycle/biconomy-lifecycle.yml. No version header, no date pinning.
+error_envelope:
+  media_type: application/json
+  shape: '{ code, message, errors[{code, path, message}] }'
+  rfc9457: false
+  note: >-
+    On 412 the envelope gains a fifth field, `authorizations`. network.biconomy.io uses a
+    different envelope entirely, `{errors: [string]}`. See errors/biconomy-problem-types.yml.
+rate_limit_signaling:
+  headers_documented: false
+  headers_observed: false
+  status_on_exhaustion: 429
+  retry_after: undocumented
+  detail: >-
+    No X-RateLimit-*, RateLimit-* or Retry-After header is documented, and none could be observed
+    without a key. An agent has no runtime signal for how close it is to a limit — it can only
+    discover exhaustion by being refused. See rate-limits/biconomy-rate-limits.yml.
+dry_run:
+  supported: true
+  mechanism: >-
+    /v1/quote accepts `simulate` (boolean) and `simulationOverrides`, and MEE executes by
+    simulating each step before committing it. `fast-quote` mode is documented for UI previews.
+    Composing a quote does not commit anything — the plan only becomes real when the signed quote
+    is submitted to /v1/execute.
+  detail: >-
+    This is a genuine rehearsal surface, and it is the strongest runtime-semantics feature on the
+    API. An agent can compose, price and simulate a full cross-chain plan with no signature and no
+    state change.
+reversibility:
+  grade: documented
+  applicable: true
+  read_only: false
+  summary: >-
+    Biconomy has real reversal machinery, but all of it is pre-commitment. Once /v1/execute is
+    accepted and the supertransaction settles on chain there is no cancel, void, refund or reverse
+    operation, and the docs do not claim one — settlement is blockchain-final. The mechanisms
+    below all work by bounding or unwinding an execution that has not yet completed, or by
+    withdrawing a standing permission. Graded `documented` rather than `verified` because no
+    published window bounds a post-execution reversal; there is no such window to state.
+  write_surfaces:
+    - operation: execute
+      path: /v1/execute
+      reversal_operation: null
+      window: null
+      reversible: false
+      detail: >-
+        No reversal. Accepted execution is final once it settles. `success: true` means accepted,
+        not completed — poll GET https://network.biconomy.io/v1/explorer/{supertxHash} for the
+        terminal state.
+      docs: https://docs.biconomy.io/overview/supertransaction-api/execute
+    - operation: quote
+      path: /v1/quote
+      reversal_operation: expiry
+      window: 'approximately 30 seconds'
+      reversible: true
+      detail: >-
+        A quote is a proposal, not a commitment. Doing nothing reverses it: quotes expire in
+        roughly 30 seconds and an expired quote cannot be executed. This is the one stated,
+        bounded window on the API.
+      docs: https://docs.biconomy.io/overview/supertransaction-api/get-quote
+  mechanisms:
+    - name: cleanUps
+      kind: automatic-unwind
+      applies_to: execute
+      window: >-
+        Runs as the last step of the same supertransaction. Not available after the
+        supertransaction completes.
+      detail: >-
+        `cleanUps` is an optional array on /v1/quote listing transfer instructions that run last
+        and return any tokens still sitting in the intermediate account to the user. Same-chain
+        execution is atomic and needs none; cross-chain execution is sequential, so a later step
+        can fail after an earlier one has already moved funds. Cleanups are how those funds come
+        back. They must be specified before signing — there is no way to add one afterwards.
+      docs: https://docs.biconomy.io/overview/abstractjs/cleanup
+    - name: upperBoundTimestamp
+      kind: expiry-bound
+      applies_to: quote
+      window: caller-specified
+      detail: >-
+        An optional deadline on the composed plan. Used for limit and conditional orders so an
+        unfilled order expires rather than firing at an unintended price later. `lowerBoundTimestamp`
+        bounds the other end.
+      docs: https://docs.biconomy.io/overview/abstractjs/conditional-execution
+    - name: simulate / simulationOverrides
+      kind: rehearsal
+      applies_to: quote
+      detail: Rehearse before committing. See dry_run above.
+    - name: revokeSession
+      kind: permission-withdrawal
+      applies_to: Smart Sessions
+      window: 'any time, effective immediately on chain'
+      detail: >-
+        The owner can revoke a granted session at any time and the revocation is enforced on
+        chain. This reverses the PERMISSION, not the transactions already executed under it.
+        Time Range and Usage Limit policies additionally cause the grant to lapse on its own; when
+        a usage limit is exhausted, further on-chain actions revert.
+      docs: https://docs.biconomy.io/agents-automation/policies/usage-limit
+  agent_guidance: >-
+    Everything an agent can do to protect a user must be decided before the signature. After
+    /v1/execute there is nothing to undo with. Compose with `simulate`, bound with
+    `upperBoundTimestamp`, always attach `cleanUps` on cross-chain flows, and delegate through a
+    Smart Session carrying a Universal Action spending cap plus a Time Range rather than a Sudo
+    policy.
+cross_references:
+  errors: errors/biconomy-problem-types.yml
+  lifecycle: lifecycle/biconomy-lifecycle.yml
+  authentication: authentication/biconomy-authentication.yml
+  rate_limits: rate-limits/biconomy-rate-limits.yml
+  sandbox: sandbox/biconomy-sandbox.yml

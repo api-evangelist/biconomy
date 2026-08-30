@@ -1,0 +1,125 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  Derived from the 4xx/5xx response schemas in openapi/biconomy-root-api-openapi.yml,
+  openapi/biconomy-mee-api-openapi.yml and openapi/biconomy-instructions-api-openapi.yml, then
+  enriched from the published error reference in
+  https://docs.biconomy.io/overview/supertransaction-api/quote-7702 and the upgrade error tabs at
+  https://docs.biconomy.io (read via llms-full.txt, 2026-08-24).
+provider: Biconomy
+providerId: biconomy
+format: custom
+media_type: application/json
+description: >-
+  Biconomy returns a single bespoke error envelope across every operation. It is not RFC 9457 —
+  there is no type URI, no title, no status field in the body and no application/problem+json
+  media type — so a generic problem-details client will not parse it. The one structurally
+  interesting case is 412, which is not an error at all but a protocol step in EIP-7702 mode.
+envelope:
+  shape:
+    code:
+      type: string
+      description: Machine-readable error identifier.
+    message:
+      type: string
+      description: Human-readable description.
+    errors:
+      type: array
+      description: Field-level detail entries.
+      items:
+        code: string
+        path: array of string — JSON path to the offending field
+        message: string
+  additional_properties: false
+  note: >-
+    The 412 response adds a fourth top-level field, `authorizations`, carrying the EIP-7702
+    delegation the owner must sign. Clients must not treat the envelope as closed on 412.
+problem_types:
+  - status: 400
+    code: BAD_REQUEST
+    title: Bad request
+    operations: [quote, execute, getOrchestrator, upgrade, hyperliquidDeposit, buildCcip]
+    detail: >-
+      Request failed validation. The `errors[]` array carries the offending field paths.
+    remediation: >-
+      Fix the named fields and re-send. Retrying unchanged fails identically — this is not a
+      transient condition.
+    retriable: false
+  - status: 400
+    code: NO_UPGRADE_NEEDED
+    title: No accounts require upgrading
+    operations: [upgrade]
+    detail: >-
+      No v2.1.0 deployments were found needing an upgrade on the specified chains.
+    remediation: >-
+      Call POST /v1/mee/orchestrator first and filter on isUpgradeNeeded before calling upgrade.
+    retriable: false
+    source: https://docs.biconomy.io/upgrade-migrate/index
+  - status: 400
+    code: INVALID_CHAIN
+    title: Unsupported chain
+    operations: [upgrade, quote]
+    detail: 'Example published message: "Chain ID 999999 is not supported".'
+    remediation: >-
+      Use a chain ID from https://docs.biconomy.io/contracts-and-audits/supported-chains.
+    retriable: false
+  - status: 400
+    code: BAD_REQUEST
+    title: Unsupported mode for upgrades
+    operations: [upgrade]
+    detail: 'Published message: "eoa-7702 mode is not supported for upgrades".'
+    remediation: Use mode `eoa` or `smart-account` for upgrade quotes.
+    retriable: false
+  - status: 412
+    code: PRECONDITION_FAILED
+    title: EOA delegation required (EIP-7702 authorization)
+    operations: [quote]
+    detail: >-
+      Returned in eoa-7702 mode when the owner's EOA has not yet delegated on the target chain.
+      The response body carries an `authorizations` field alongside code/message/errors.
+    remediation: >-
+      Have the owner sign the returned authorization, then re-send the quote with it in the
+      request's `authorizations` field. Occurs once per chain — subsequent quotes on that chain
+      will not return 412.
+    retriable: true
+    note: >-
+      Not a failure. Treating 412 as a terminal error is the single most likely integration
+      mistake on this API, because every other 4xx here is terminal.
+    source: https://docs.biconomy.io/overview/supertransaction-api/quote-7702
+  - status: 500
+    code: INTERNAL_SERVER_ERROR
+    title: Server error
+    operations: [quote, execute, getOrchestrator, upgrade, hyperliquidDeposit, buildCcip]
+    detail: Unspecified server-side failure.
+    remediation: >-
+      Safe to retry `quote`. Do NOT blind-retry `execute` — the API accepts no idempotency key,
+      so a retry after a request that actually landed can double-execute and move funds twice.
+      Poll GET https://network.biconomy.io/v1/explorer/{supertxHash} first.
+    retriable: conditional
+  - status: 401
+    code: UNAUTHORIZED
+    title: API key required
+    operations: [explorer]
+    detail: >-
+      Observed live on GET https://network.biconomy.io/v1/explorer/{hash} without a key:
+      {"errors":["API key required. Please visit https://dashboard.biconomy.io ..."]}.
+      Note the envelope differs from the api.biconomy.io shape — it is a bare `errors` array of
+      strings with no `code` or `message`.
+    remediation: 'Send the header Authorization: Bearer <API key>.'
+    retriable: false
+    method: probed
+    probed: '2026-08-24'
+    http_status: 401
+gaps:
+  - >-
+    No published catalogue of `code` values. The four codes recorded above were recovered from
+    worked examples in the docs, not from an error reference page — a client cannot enumerate what
+    it must handle.
+  - >-
+    Two different error envelopes across two hosts: api.biconomy.io returns {code, message,
+    errors[{code,path,message}]}, while network.biconomy.io returns {errors: [string]}. A single
+    client integrating both surfaces needs two parsers.
+  - >-
+    No documented rate-limit error. The rate-limits artifact records 429 as the throttling status
+    on the basis of the earlier profile's reading of the docs, but no worked 429 example or
+    Retry-After header is published.

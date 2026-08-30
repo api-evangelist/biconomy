@@ -1,0 +1,168 @@
+generated: '2026-08-24'
+method: derived
+source: >-
+  Derived from the request and response schemas in openapi/biconomy-root-api-openapi.yml,
+  openapi/biconomy-mee-api-openapi.yml and openapi/biconomy-instructions-api-openapi.yml, plus the
+  object descriptions published at https://docs.biconomy.io/overview/supertransaction-api/*.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  The Biconomy contract declares zero named components.schemas — every shape is inlined into the
+  operation that uses it — so the entity graph below is reconstructed from those inline objects.
+  It is not a persistence model. Biconomy stores no user-owned resources: there is no GET, no
+  identifier to fetch by, and no lifecycle beyond a single request/response pair. The entities are
+  message shapes in a compose-sign-execute pipeline, and the "relationships" are containment
+  within one payload. The only identifiers that outlive a request are the quote hash and the
+  supertransaction hash, and both resolve on chain or on the explorer host rather than here.
+identifiers:
+  - name: ownerAddress
+    form: EVM address (0x + 40 hex)
+    scope: global (chain-agnostic)
+    detail: The EOA that owns the orchestrator account. The root key of the whole graph.
+  - name: quote.hash
+    form: 0x-prefixed hash
+    scope: per-quote
+    detail: Identifies a composed plan. Expires with the quote (~30 seconds).
+  - name: supertxHash
+    form: 0x-prefixed hash
+    scope: per-execution
+    detail: >-
+      Returned by /v1/execute. The only durable handle a client gets. Resolves at
+      https://network.biconomy.io/v1/explorer/{supertxHash} and
+      https://meescan.biconomy.io/details/{supertxHash}.
+  - name: chainId
+    form: integer
+    detail: EVM chain identifier. Present on nearly every nested object; the graph is chain-sharded.
+  - name: token address
+    form: EVM address
+    detail: ERC-20 contract address, always paired with a chainId. A token is not identified without one.
+entities:
+  - name: QuoteRequest
+    operation: quote
+    fields_required: [mode, ownerAddress, composeFlows]
+    fields_optional:
+      [authorizations, fundingTokens, feeToken, cleanUps, gasLimit, lowerBoundTimestamp,
+       upperBoundTimestamp, simulate, simulationOverrides]
+    detail: >-
+      The plan a client proposes. `mode` is one of smart-account, eoa, eoa-7702 and determines
+      which optional fields become mandatory in practice (eoa requires fundingTokens plus a
+      withdrawal instruction).
+  - name: ComposeFlow
+    detail: >-
+      A single step in the plan. Polymorphic — an anyOf over a discriminating `type` const plus a
+      per-type `data` object. Array is bounded at minItems 1, maxItems 10, so a supertransaction
+      is at most ten instructions.
+    variants:
+      - /instructions/build
+      - /instructions/build-raw
+      - /instructions/intent
+      - /instructions/intent-simple
+      - /instructions/intent-vault
+  - name: Quote
+    operation: quote
+    fields: [hash, node, commitment, paymentInfo, userOps, fundingTokens]
+    detail: The priced, sequenced plan MEE returns.
+  - name: PaymentInfo
+    fields:
+      [sender, initCode, nonce, token, chainId, verificationGasLimit, eoa, eip7702Auth,
+       shortEncoding, callGasLimit, sponsored, sponsorshipUrl, tokenAmount, tokenValue,
+       tokenWeiAmount, gasFee]
+    detail: >-
+      How gas gets paid. `sponsored` plus `sponsorshipUrl` carry the paymaster decision;
+      eip7702Auth carries the delegation when mode is eoa-7702.
+  - name: UserOp
+    detail: An ERC-4337 UserOperation. The bridge between the MEE abstraction and the 4337 stack.
+  - name: PayloadToSign
+    detail: >-
+      What the owner signs. Untyped in the spec (array of unconstrained items) — the actual shape
+      varies by mode and is documented in prose at
+      https://docs.biconomy.io/overview/supertransaction-api/sign-payload rather than in the
+      contract. A client cannot generate a correct signer from the spec alone.
+  - name: Instruction
+    fields: [calls, chainId, isComposable]
+    detail: The resolved, per-chain call set MEE derived from the compose flows.
+  - name: Fee
+    fields: [amount, token, chainId]
+    detail: The MEE fee, denominated in the feeToken the caller nominated (or sponsored).
+  - name: CleanUp
+    detail: >-
+      A trailing transfer instruction that returns residual tokens to the user. Optional on the
+      request, runs last on execution. See conventions/biconomy-conventions.yml.
+  - name: ExecutionResponse
+    operation: execute
+    fields: [success, supertxHash, error]
+    detail: Acceptance, not completion.
+  - name: OrchestratorDeployment
+    operation: getOrchestrator
+    detail: >-
+      Per-chain deployment record for an owner's orchestrator account, carrying the chain, the
+      address and an isUpgradeNeeded flag.
+  - name: UpgradeDetail
+    operation: upgrade
+    fields: [chainId, addressVersion, address, nexusVersion, targetVersion]
+    detail: One entry per account being upgraded.
+relationships:
+  - from: QuoteRequest
+    to: ComposeFlow
+    type: has_many
+    via: composeFlows
+    cardinality: 1..10
+  - from: QuoteRequest
+    to: CleanUp
+    type: has_many
+    via: cleanUps
+  - from: QuoteResponse
+    to: Quote
+    type: has_one
+    via: quote
+  - from: QuoteResponse
+    to: Fee
+    type: has_one
+    via: fee
+  - from: QuoteResponse
+    to: PayloadToSign
+    type: has_many
+    via: payloadToSign
+  - from: QuoteResponse
+    to: Instruction
+    type: has_many
+    via: instructions
+  - from: Quote
+    to: PaymentInfo
+    type: has_one
+    via: paymentInfo
+  - from: Quote
+    to: UserOp
+    type: has_many
+    via: userOps
+  - from: Quote
+    to: Token
+    type: has_many
+    via: fundingTokens
+  - from: ExecuteRequest
+    to: Quote
+    type: belongs_to
+    via: quote
+    note: >-
+      /v1/execute takes the entire quote object back, signed. The quote is passed by value, not by
+      its hash — there is no server-side quote resource to reference.
+  - from: OrchestratorDeployment
+    to: ownerAddress
+    type: belongs_to
+    via: ownerAddress
+  - from: UpgradeDetail
+    to: OrchestratorDeployment
+    type: belongs_to
+    via: 'chainId + address'
+observations:
+  - >-
+    No components.schemas anywhere in the published contract. Every shape is inline, which means
+    no $ref reuse, no generated named types, and the same object (Fee, Token, CleanUp) is
+    redeclared in each operation that uses it. Code generators produce anonymous nested types.
+  - >-
+    `payloadToSign` and `returnedData` are declared as arrays with untyped items. The two fields a
+    client most needs to handle correctly are the two the contract describes least.
+  - >-
+    The graph has no server-side persistence. There is nothing to list, nothing to fetch, nothing
+    to delete — which is why pagination, sparse fieldsets and conditional requests are all
+    inapplicable rather than missing.

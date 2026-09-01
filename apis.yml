@@ -196,7 +196,7 @@ apis:
   humanURL: https://docs.biconomy.io/overview/supertransaction-api
   baseURL: https://api.biconomy.io
   tags:
-  - mee
+  - MEE
   tags_raw:
   - mee
   properties:

@@ -412,6 +412,8 @@ accessModel:
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/biconomy.png
 access: 3rd-Party
 common:
+  - type: Website
+    url: https://www.biconomy.io/
   - type: AgenticAccess
     url: agentic-access/biconomy-agentic-access.yml
   - type: DomainSecurity

@@ -1,0 +1,82 @@
+generated: '2026-08-24'
+method: derived
+source: >-
+  Derived by binding the live MCP tools/list from https://docs.biconomy.io/mcp (probed 2026-08-24)
+  against the operationIds in openapi/biconomy-root-api-openapi.yml,
+  openapi/biconomy-mee-api-openapi.yml and openapi/biconomy-instructions-api-openapi.yml.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  The crosswalk between Biconomy's MCP surface and its REST surface is empty by construction,
+  and that is the finding. Biconomy ships a live, anonymous MCP server and a live, key-gated REST
+  API, and the two do not touch: every MCP tool operates on documentation, and every REST
+  operation composes or executes a transaction. There is no tool an agent can call to get a
+  quote, and no REST operation behind any tool. Recorded here so the zero is legible as a
+  measured result rather than as an unfinished mapping.
+surfaces:
+  openapi:
+    gated: true
+    gate: X-API-Key header, project-scoped, issued from https://dashboard.biconomy.io
+    files:
+      - file: openapi/biconomy-root-api-openapi.yml
+        operations: [quote, execute]
+      - file: openapi/biconomy-mee-api-openapi.yml
+        operations: [getOrchestrator, upgrade]
+      - file: openapi/biconomy-instructions-api-openapi.yml
+        operations: [hyperliquidDeposit, buildCcip]
+  mcp:
+    url: https://docs.biconomy.io/mcp
+    gated: false
+    note: Anonymous. Live schemas read directly from tools/list, not inferred.
+  graphql:
+    present: false
+crosswalk: []
+mcp_only:
+  - tool: search_biconomy_docs
+    reason: >-
+      Documentation retrieval. No REST operation exposes the docs corpus — Biconomy publishes it
+      as HTML, llms.txt and llms-full.txt, none of which is an API operation.
+  - tool: query_docs_filesystem_biconomy_docs
+    reason: >-
+      Read-only virtual filesystem over docs pages and OpenAPI specs. Not backed by any REST
+      operation. It is, indirectly, the only agent-callable route to the contract itself.
+  - tool: submit_feedback
+    reason: >-
+      Docs feedback intake. No public REST endpoint accepts documentation feedback.
+rest_only:
+  - operation: quote
+    method: POST
+    path: /v1/quote
+    reason: >-
+      The core operation of the product — composes a multichain execution plan and returns the
+      signable payload. No MCP tool reaches it. An agent must build the HTTP call itself.
+  - operation: execute
+    method: POST
+    path: /v1/execute
+    reason: >-
+      Submits the signed quote for execution. Not exposed over MCP. This is the operation that
+      moves user funds, so its absence from the MCP surface is a deliberate-looking boundary
+      rather than an oversight.
+  - operation: getOrchestrator
+    method: POST
+    path: /v1/mee/orchestrator
+    reason: Orchestrator address lookup. Not exposed over MCP.
+  - operation: upgrade
+    method: POST
+    path: /v1/mee/upgrade
+    reason: Legacy account upgrade quote. Not exposed over MCP.
+  - operation: hyperliquidDeposit
+    method: POST
+    path: /v1/instructions/hyperliquid/deposit
+    reason: Hyperliquid deposit instruction builder. Not exposed over MCP.
+  - operation: buildCcip
+    method: POST
+    path: /v1/instructions/build-ccip
+    reason: CCIP bridging instruction builder. Not exposed over MCP.
+coverage:
+  mcp_tools: 3
+  rest_operations: 6
+  bound: 0
+  mcp_only: 3
+  rest_only: 6
+  binding_rate: 0.0

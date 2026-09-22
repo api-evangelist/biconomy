@@ -1,5 +1,9 @@
 aid: biconomy
 url: https://raw.githubusercontent.com/api-evangelist/biconomy/refs/heads/main/apis.yml
+x-docs-platform: mintlify
+x-docs-platform-confidence: medium
+x-docs-platform-checked: 2026-09-20
+x-docs-hosting: vercel
 apis:
 - aid: biconomy:biconomy-bundler-api
   name: Biconomy Bundler API

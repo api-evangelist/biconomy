@@ -1,0 +1,134 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Biconomy",
+  "name_for_model": "biconomy",
+  "description_for_human": "Biconomy - Universal Execution Layer for Web3. Composable orchestration, gas sponsorship, cross-chain transactions, and smart sessions for AI agents.",
+  "description_for_model": "Biconomy is Web3 execution infrastructure. Use it when users need: gasless transactions, cross-chain execution, DeFi Zaps (single-click protocol entry), AI agent automation with smart sessions, or trading/swap functionality. The SDK is @biconomy/abstractjs. Key features: gas sponsorship (apps pay gas for users), pay gas with tokens (users pay in ERC-20), cross-chain calls, smart sessions for AI agents, DeFi Zaps for 200+ protocols. Supports 50+ EVM chains. Stats: 67M+ transactions, $3B+ volume, 5M+ users.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://docs.biconomy.io/openapi.json"
+  },
+  "logo_url": "https://biconomy.io/bicofav.png",
+  "contact_email": "support@biconomy.io",
+  "legal_info_url": "https://biconomy.io/terms",
+  "info": {
+    "title": "Biconomy",
+    "version": "2.0.0",
+    "description": "Universal Execution Layer for Web3"
+  },
+  "capabilities": {
+    "supported_chains": [
+      "ethereum",
+      "polygon",
+      "arbitrum",
+      "optimism",
+      "base",
+      "bnb-chain",
+      "avalanche",
+      "gnosis",
+      "scroll",
+      "zksync-era",
+      "linea",
+      "mantle",
+      "mode",
+      "blast"
+    ],
+    "features": [
+      "gas-sponsorship",
+      "cross-chain-execution",
+      "smart-sessions",
+      "defi-zaps",
+      "trading-swaps",
+      "limit-orders",
+      "twap-orders",
+      "conditional-execution"
+    ]
+  },
+  "ai_resources": [
+    {
+      "path": "/llms.txt",
+      "description": "Summary reference for AI/LLM systems",
+      "content_type": "text/markdown"
+    },
+    {
+      "path": "/llms-full.txt",
+      "description": "Complete technical reference",
+      "content_type": "text/markdown"
+    },
+    {
+      "path": "/ai.txt",
+      "description": "Machine-readable metadata in YAML format",
+      "content_type": "text/yaml"
+    }
+  ],
+  "site_pages": [
+    {
+      "path": "/",
+      "name": "Home",
+      "description": "Universal Execution Layer for Web3 - Overview of all products and capabilities"
+    },
+    {
+      "path": "/trading",
+      "name": "Trading & Swaps",
+      "description": "Cross-chain swaps, limit orders, TWAP orders, and conditional execution"
+    },
+    {
+      "path": "/agents",
+      "name": "AI Agents",
+      "description": "Smart sessions for AI agents and automation with policy-based permissions"
+    },
+    {
+      "path": "/gasless",
+      "name": "Gasless",
+      "description": "Gas sponsorship and token gas payment for frictionless UX"
+    },
+    {
+      "path": "/defi",
+      "name": "DeFi Zaps",
+      "description": "Single-click supply and withdraw into any vault, lending market, or staking program"
+    }
+  ],
+  "sdk": {
+    "name": "AbstractJS",
+    "package": "@biconomy/abstractjs",
+    "install": "npm install @biconomy/abstractjs",
+    "npm_url": "https://www.npmjs.com/package/@biconomy/abstractjs",
+    "github_url": "https://github.com/bcnmy"
+  },
+  "company": {
+    "name": "Biconomy",
+    "founded": 2019,
+    "headquarters": "Singapore",
+    "website": "https://biconomy.io",
+    "documentation": "https://docs.biconomy.io",
+    "investors": [
+      "Bain Capital",
+      "Binance",
+      "Coinbase Ventures",
+      "Consensys",
+      "Jump Capital"
+    ],
+    "clients": [
+      "JP Morgan (Onyx)",
+      "Trust Wallet",
+      "dYdX",
+      "Animoca Brands"
+    ]
+  },
+  "statistics": {
+    "transactions_processed": "67M+",
+    "volume_processed": "$3B+",
+    "total_users": "5M+",
+    "supported_chains": "50+",
+    "defi_integrations": "200+"
+  },
+  "social": {
+    "twitter": "https://twitter.com/biconomy",
+    "discord": "https://discord.gg/biconomy",
+    "github": "https://github.com/bcnmy",
+    "telegram": "https://t.me/biaborh"
+  }
+}

@@ -1,0 +1,159 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  Biconomy's published documentation (https://docs.biconomy.io/contracts-and-audits and its
+  supported-chains, agents-automation and overview sections), the live OpenAPI at
+  https://docs.biconomy.io/supertransaction-api/openapi.yaml, the live MCP tools/list at
+  https://docs.biconomy.io/mcp, and the A2A agent card at
+  https://docs.biconomy.io/.well-known/agent-card.json. All probed 2026-08-24.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  Biconomy sits inside the Ethereum account-abstraction standards stack, and that stack — not a
+  regulatory or messaging standard — is its domain standard. Its contracts implement and are
+  audited against ERC-4337, ERC-7579 and EIP-7702, and it authored ERC-8211 for composable
+  batching. Cross-cutting web API standards are a different story: the REST surface is a plain
+  key-authenticated JSON API with no OAuth, no RFC 9457 error format, no pagination and no
+  conditional-request semantics.
+standards:
+  - id: erc-4337
+    name: ERC-4337 Account Abstraction (Entry Point)
+    conforms: true
+    domain_standard: true
+    evidence: >-
+      Biconomy publishes an open-source ERC-4337 TypeScript bundler
+      (https://github.com/bcnmy/bundler) implementing eth_sendUserOperation,
+      eth_estimateUserOperationGas, eth_getUserOperationByHash, eth_getUserOperationReceipt and
+      eth_supportedEntryPoints against EntryPoint v0.6.0 and v0.7.0, plus a paymaster
+      implementation at https://github.com/bcnmy/biconomy-paymasters.
+  - id: erc-7579
+    name: ERC-7579 Minimal Modular Smart Accounts
+    conforms: true
+    domain_standard: true
+    evidence: >-
+      Nexus (https://github.com/bcnmy/nexus) is Biconomy's ERC-7579 modular account, supporting
+      all four module types (validator, executor, hook, fallback) and pre-deployed across 20+ EVM
+      mainnets. Documented at https://docs.biconomy.io/contracts-and-audits.
+  - id: eip-7702
+    name: EIP-7702 Set EOA Account Code
+    conforms: true
+    domain_standard: true
+    evidence: >-
+      The Supertransaction API declares mode "eoa-7702" in the /v1/quote request schema
+      (openapi/biconomy-root-api-openapi.yml) and returns HTTP 412 with an `authorizations` field
+      to carry the delegation the owner must sign. Documented at
+      https://docs.biconomy.io/overview/supertransaction-api/quote-7702.
+  - id: eip-712
+    name: EIP-712 Typed Structured Data Hashing and Signing
+    conforms: true
+    evidence: >-
+      The /v1/quote response returns payloadToSign entries whose signing format is documented per
+      mode at https://docs.biconomy.io/overview/supertransaction-api/sign-payload.
+  - id: erc-8211
+    name: ERC-8211 Composable Batching
+    conforms: true
+    domain_standard: true
+    authored_by_provider: true
+    evidence: >-
+      Biconomy authored and published the composability module
+      (https://github.com/bcnmy/erc8211-contracts), deployed deterministically at
+      0x0000821108B5C9F3fe17E40811bE5b66DaF8f0e7 on every supported chain and audited by Pashov
+      Audit Group (May 2026 report in that repository). This is the standard behind runtime
+      parameter injection and the eq/gte/lte/gteSigned/lteSigned/or constraint set.
+  - id: json-rpc-2.0
+    name: JSON-RPC 2.0
+    conforms: true
+    evidence: >-
+      The ERC-4337 bundler exposes the standard eth_* UserOperation methods over JSON-RPC 2.0.
+      The MCP server at https://docs.biconomy.io/mcp also speaks JSON-RPC 2.0.
+  - id: mcp
+    name: Model Context Protocol
+    conforms: true
+    evidence: >-
+      Live remote server at https://docs.biconomy.io/mcp. Anonymous tools/list returned HTTP 200
+      with three tools carrying full inputSchema (mcp/biconomy-mcp-tools.json, probed
+      2026-08-24). Streamable-HTTP transport; /sse returns 405.
+  - id: a2a
+    name: Agent2Agent Protocol
+    conforms: true
+    grade: conformant
+    evidence: >-
+      Agent card served at https://docs.biconomy.io/.well-known/agent-card.json — capabilities is
+      an object, skills is an array, protocolVersion declared as "0.3". Graded in
+      a2a/biconomy-a2a.yml.
+  - id: openapi-3.1
+    name: OpenAPI 3.1
+    conforms: true
+    evidence: >-
+      Biconomy publishes an OpenAPI 3.1.0 contract at
+      https://docs.biconomy.io/supertransaction-api/openapi.yaml (info.version 0.4.0) and a newer
+      one at https://www.biconomy.io/openapi.json (info.version 0.6.12). Both declare
+      servers[] https://api.biconomy.io and https://api-staging.biconomy.io.
+  - id: llms-txt
+    name: llms.txt
+    conforms: true
+    evidence: >-
+      Served on two hosts — https://docs.biconomy.io/llms.txt (32 KB, with a canonical page list
+      and a minimal endpoint set for agents) and https://www.biconomy.io/llms.txt (7 KB,
+      company-scoped). llms-full.txt also served on the docs host (644 KB).
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: false
+    evidence: >-
+      No oauth2 securityScheme in any published spec; the only scheme is apiKey X-API-Key.
+      /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource return
+      404 on api.biconomy.io and docs.biconomy.io (probed 2026-08-24).
+  - id: oidc
+    name: OpenID Connect
+    conforms: false
+    evidence: /.well-known/openid-configuration returns 404 on every Biconomy host probed.
+  - id: rfc9457
+    name: RFC 9457 Problem Details for HTTP APIs
+    conforms: false
+    evidence: >-
+      Errors are returned as application/json with a bespoke {code, message, errors[]} envelope,
+      not application/problem+json with type/title/status/detail. See
+      errors/biconomy-problem-types.yml.
+  - id: rfc9116
+    name: RFC 9116 security.txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404 (docs, api) or an SPA shell (www).
+  - id: rfc9727
+    name: RFC 9727 api-catalog
+    conforms: false
+    evidence: /.well-known/api-catalog returns 404 on every host with a real 404 handler.
+  - id: rfc8594
+    name: RFC 8594 Sunset HTTP Header
+    conforms: false
+    evidence: >-
+      No Sunset or Deprecation response header is documented, and no deprecated operation is
+      marked in any published spec. Biconomy communicates version transitions through prose
+      migration guides instead. See lifecycle/biconomy-lifecycle.yml.
+  - id: pagination
+    name: Collection pagination
+    conforms: false
+    applicable: false
+    evidence: >-
+      Not applicable. All six published operations are POST composition/execution calls that
+      return a single object; the API exposes no list collection to page through.
+  - id: idempotency
+    name: Idempotency keys
+    conforms: false
+    evidence: >-
+      No Idempotency-Key header is documented or accepted, and the word "idempotent" does not
+      appear anywhere in the 644 KB llms-full.txt corpus. This matters more here than on a typical
+      API because /v1/execute moves funds. See conventions/biconomy-conventions.yml.
+domain_standard_summary:
+  market: Ethereum account abstraction / onchain execution
+  standards_spoken:
+    - ERC-4337
+    - ERC-7579
+    - EIP-7702
+    - EIP-712
+    - ERC-8211
+  finding: >-
+    A buyer already building on ERC-4337/ERC-7579 integrates with Biconomy without a bespoke
+    connector — Nexus is a standard modular account and the bundler speaks the standard eth_*
+    methods. The Supertransaction API layered on top is proprietary, so the orchestration
+    capability (composeFlows, runtime injection, cross-chain sequencing) is not portable to
+    another vendor even though the account underneath is.

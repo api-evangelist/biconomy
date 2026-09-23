@@ -1,0 +1,66 @@
+generated: '2026-08-24'
+method: probed
+source: https://docs.biconomy.io/.well-known/agent-card.json
+provider: Biconomy
+providerId: biconomy
+description: Biconomy serves an A2A Agent Card from its documentation host. The card describes the documentation agent — its single skill points at a published Agent Skill markdown file rather than at the Supertransaction API — so it is a discovery surface for Biconomy's docs, not a callable A2A binding onto the MEE execution API. That distinction is recorded in deviations below because a reader could otherwise assume the card exposes the transaction API over A2A.
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: docs.biconomy.io
+  legacy_path_probed: /.well-known/agent.json
+  legacy_path_status: 404
+  other_hosts_probed:
+  - host: www.biconomy.io
+    status: 200
+    result: miss
+    note: SPA shell HTML, not an agent card.
+  - host: api.biconomy.io
+    status: 404
+    result: miss
+  - host: dashboard.biconomy.io
+    status: 429
+    result: unmeasured
+x-evidence:
+  fetched: '2026-08-24'
+  url: https://docs.biconomy.io/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+card:
+  file: biconomy-agent-card.json
+  name: Biconomy Docs
+  url: https://docs.biconomy.io/
+  version: 1.0.0
+  protocolVersion: '0.3'
+  preferredTransport: HTTP+JSON
+  provider_organization: Biconomy Docs
+  documentationUrl: https://docs.biconomy.io/
+  capabilities:
+    streaming: false
+    pushNotifications: false
+  skills:
+  - id: biconomy
+    name: Biconomy
+    url: https://docs.biconomy.io/.well-known/agent-skills/biconomy/skill.md
+    note: Resolves 200 text/markdown, 13,012 bytes. Saved verbatim to skills/biconomy-published-skill.md.
+grade_basis:
+  spec: A2A 1.0.0
+  hard_checks:
+    capabilities_is_object: true
+    protocolVersion_present: true
+    skills_is_array: true
+  optional_checks:
+    preferredTransport_present: true
+    defaultInputModes_present: true
+    defaultOutputModes_present: true
+deviations:
+- severity: informational
+  finding: protocolVersion is declared as "0.3", not "1.0.0". The card conforms structurally to the 1.0.0 shape but self-identifies against the pre-1.0 line.
+- severity: informational
+  finding: The card scopes itself to documentation ("Biconomy Docs"), and its single skill dereferences to a markdown Agent Skill rather than to an A2A task endpoint. capabilities.streaming and capabilities.pushNotifications are both false, so there is no long-running-task surface.
+- severity: informational
+  finding: The card is served from docs.biconomy.io, not from api.biconomy.io where the executable Supertransaction API lives. api.biconomy.io returns 404 on both agent-card paths, so an agent that discovers Biconomy by probing the API host finds no card.
+- severity: informational
+  finding: skills[0].tags is an empty array, so the card carries no tag-based routing signal.
+conformance:
+  grade: conformant

@@ -1,9 +1,8 @@
 {
   "provider": "biconomy",
   "sources": [
-    "biconomy-instructions-api-openapi.yml",
-    "biconomy-mee-api-openapi.yml",
-    "biconomy-root-api-openapi.yml"
+    "_original/biconomy-supertransaction-api-0.6.12-openapi.json",
+    "_original/biconomy-supertransaction-api-openapi.yml"
   ],
   "outputs": [
     "biconomy-instructions-api-openapi.yml",
@@ -13,6 +12,24 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "biconomy-supertransaction-api-0.6.12-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "biconomy-supertransaction-api-0.6.12-openapi.json: declared missing tag: instructions",
+    "biconomy-supertransaction-api-0.6.12-openapi.json: declared missing tag: mee",
+    "biconomy-supertransaction-api-0.6.12-openapi.json: declared missing tag: root",
+    "biconomy-supertransaction-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "biconomy-supertransaction-api-openapi.yml: declared missing tag: instructions",
+    "biconomy-supertransaction-api-openapi.yml: declared missing tag: mee",
+    "biconomy-supertransaction-api-openapi.yml: declared missing tag: root",
+    "tag 'instructions' spans 2 source specs (biconomy-supertransaction-api-0.6.12-openapi.json, biconomy-supertransaction-api-openapi.yml): per-path servers applied",
+    "tag 'mee' spans 2 source specs (biconomy-supertransaction-api-0.6.12-openapi.json, biconomy-supertransaction-api-openapi.yml): per-path servers applied",
+    "tag 'root' spans 2 source specs (biconomy-supertransaction-api-0.6.12-openapi.json, biconomy-supertransaction-api-openapi.yml): per-path servers applied",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "biconomy-instructions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "biconomy-mee-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "biconomy-root-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

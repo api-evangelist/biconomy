@@ -1,0 +1,96 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  https://raw.githubusercontent.com/bcnmy/abstractjs/main/CHANGELOG.md (HTTP 200),
+  registry.npmjs.org release metadata, the GitHub Releases API for bcnmy/abstractjs, the MEE Suite
+  version notes in https://docs.biconomy.io/contracts-and-audits, and a probe of
+  https://docs.biconomy.io/changelog. All 2026-08-24.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  Biconomy publishes no dated changelog for its API or its platform. What exists is an
+  undated changesets file in the SDK repository and the npm release history behind it. The
+  practical consequence for an integrator is that there is no way to answer "what changed in the
+  Supertransaction API, and when" — the API's own spec version moved from 0.4.0 to 0.6.12 and
+  gained an operation with no announcement anywhere.
+surfaces:
+  - name: Documentation changelog
+    url: https://docs.biconomy.io/changelog
+    status: 404
+    published: false
+    note: Probed 2026-08-24. No changelog page exists on the docs site.
+  - name: AbstractJS CHANGELOG.md
+    url: https://github.com/bcnmy/abstractjs/blob/main/CHANGELOG.md
+    status: 200
+    published: true
+    scheme: changesets
+    dated: false
+    note: >-
+      Present but undated — changesets output records version and a bullet list of changes with no
+      release date, and entries are terse ("Cleanups", "Raw call data"). The head of the file on
+      main is 1.0.7 while npm dist-tags latest is 2.0.0 (published 2026-08-07), so the file in the
+      default branch is behind the published package: a reader cannot see what shipped in 2.0.0.
+  - name: GitHub Releases
+    repo: bcnmy/abstractjs
+    published: false
+    note: The releases API returns an empty list. No tagged release notes.
+  - name: MEE Suite version notes
+    url: https://docs.biconomy.io/contracts-and-audits
+    published: true
+    dated: false
+    note: >-
+      Contract-side version history is documented as a deployment matrix plus prose about what
+      each Suite version adds (2.2.0 native composability; 2.2.2 the audited reference
+      implementation and the gteSigned/lteSigned/or constraints). Versioned but not dated.
+scheme: semver
+current_version:
+  sdk: 2.0.0
+  sdk_published: '2026-08-07'
+  api_spec_docs_host: 0.4.0
+  api_spec_www_host: 0.6.12
+  contracts_suite: 2.2.2
+entries:
+  - version: 2.0.0
+    component: '@biconomy/abstractjs'
+    date: '2026-08-07'
+    source: registry.npmjs.org
+    breaking: unknown
+    highlights: >-
+      Major version bump. No release notes published — not in CHANGELOG.md on main, not in GitHub
+      Releases, not in the docs. The nature of the break is undocumented.
+  - version: 0.6.12
+    component: Supertransaction API (OpenAPI info.version)
+    date: unknown
+    source: https://www.biconomy.io/openapi.json
+    breaking: false
+    highlights: >-
+      Adds POST /v1/mee/upgrade (operationId `upgrade`) — the legacy-account upgrade quote — and
+      drops POST /v1/instructions/build-ccip relative to the 0.4.0 spec still served on the docs
+      host. Undated and unannounced; discovered by diffing the two published specs on 2026-08-24.
+    note: >-
+      An operation appearing in one published spec and disappearing from another, with no
+      changelog, is the concrete cost of the missing changelog surface.
+  - version: 0.4.0
+    component: Supertransaction API (OpenAPI info.version)
+    date: unknown
+    source: https://docs.biconomy.io/supertransaction-api/openapi.yaml
+    breaking: false
+    highlights: >-
+      The spec the docs host and the docs-host ai-plugin.json both point at. Contains
+      /v1/instructions/build-ccip; does not contain /v1/mee/upgrade.
+  - version: 0.4.24
+    component: '@biconomy/abstractjs-canary'
+    date: '2025-08-08'
+    source: registry.npmjs.org
+    highlights: Canary channel, last published a year before the stable 2.0.0 release.
+  - version: 0.0.29
+    component: '@biconomy/sdk'
+    date: '2025-01-16'
+    source: registry.npmjs.org
+    highlights: Final release of the superseded SDK line before AbstractJS took over.
+gaps:
+  - No dated changelog for the API, the platform, or the dashboard.
+  - No release notes for the SDK's 2.0.0 major version.
+  - >-
+    Two published OpenAPI specs at different versions disagree about the operation set, and
+    nothing tells a consumer which is authoritative.

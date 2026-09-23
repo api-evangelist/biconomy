@@ -1,0 +1,191 @@
+generated: '2026-08-24'
+method: probed
+source: >-
+  Anonymous HTTP GET of each /.well-known/ path against every host named in apis.yml and in the
+  OpenAPI servers[] block, on 2026-08-24. Statuses recorded exactly as returned.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  Biconomy serves a real, hand-authored /.well-known/ surface on two of its hosts. www.biconomy.io
+  and docs.biconomy.io each publish a distinct ai-plugin.json — the www one describes the company
+  and its product surface, the docs one describes the Supertransaction API and its auth header —
+  and docs.biconomy.io additionally serves an A2A agent card (captured separately under a2a/).
+  No security.txt, OpenID configuration, OAuth metadata or RFC 9727 api-catalog is served on any
+  host. Two caveats matter when reading the table below: www.biconomy.io is a single-page app that
+  answers 200 with the same 10,969-byte shell for EVERY unknown path, so every text/html 200 on
+  that host is a soft-404 and is recorded as a miss; dashboard.biconomy.io rate-limited the probe
+  and returned 429 on every path, so its /.well-known/ surface is unmeasured rather than absent.
+hosts:
+  - host: www.biconomy.io
+    note: >-
+      Single-page app. Every unrecognised path returns 200 with the identical HTML shell, so only
+      the application/json response below is a real document.
+    documents:
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        content_type: application/json
+        file: biconomy-www-ai-plugin.json
+        note: >-
+          Real hand-authored manifest. Declares auth type none, points api.url at
+          https://docs.biconomy.io/openapi.json — which is itself a 404 (see gaps below) — and
+          advertises /llms.txt, /llms-full.txt and /ai.txt as AI resources.
+      - path: /.well-known/security.txt
+        status: 200
+        content_type: text/html
+        file: null
+        note: SPA shell, not a document. Treated as absent.
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: text/html
+        file: null
+        note: SPA shell, not a document. Treated as absent.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: text/html
+        file: null
+        note: SPA shell, not a document. Treated as absent.
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        content_type: text/html
+        file: null
+        note: SPA shell, not a document. Treated as absent.
+      - path: /.well-known/api-catalog
+        status: 200
+        content_type: text/html
+        file: null
+        note: SPA shell, not a document. Treated as absent.
+      - path: /.well-known/agent-card.json
+        status: 200
+        content_type: text/html
+        file: null
+        note: SPA shell, not an agent card. Treated as absent.
+      - path: /.well-known/agent.json
+        status: 200
+        content_type: text/html
+        file: null
+        note: SPA shell, not an agent card. Treated as absent.
+  - host: docs.biconomy.io
+    note: >-
+      Mintlify-hosted documentation. Returns real 404s for unknown paths, so the 200s below are
+      genuine documents.
+    documents:
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        content_type: application/json
+        file: biconomy-docs-ai-plugin.json
+        note: >-
+          API-scoped manifest. Declares auth type service_http with custom header X-API-Key and
+          points api.url at https://docs.biconomy.io/supertransaction-api/openapi.yaml, which
+          serves the live OpenAPI 3.1.0 contract (200, 170 KB).
+      - path: /.well-known/agent-card.json
+        status: 200
+        content_type: application/json
+        file: ../a2a/biconomy-agent-card.json
+        note: >-
+          A2A agent card. Saved verbatim and graded under a2a/biconomy-a2a.yml rather than here.
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+        note: Legacy pre-0.3 agent-card path. Not served; the canonical path is.
+  - host: api.biconomy.io
+    note: >-
+      The production API host. Returns a JSON 404 envelope for every /.well-known/ path — no
+      discovery surface at all on the host an agent actually calls.
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: dashboard.biconomy.io
+    note: >-
+      Every probe returned 429 (rate limited by the host's edge, not by us exceeding a documented
+      quota). This host's /.well-known/ surface is UNMEASURED, not confirmed absent.
+    documents:
+      - path: /.well-known/security.txt
+        status: 429
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 429
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 429
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 429
+        file: null
+      - path: /.well-known/api-catalog
+        status: 429
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 429
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 429
+        file: null
+      - path: /.well-known/agent.json
+        status: 429
+        file: null
+adjacent_documents:
+  - url: https://www.biconomy.io/ai.txt
+    status: 200
+    content_type: text/plain
+    file: biconomy-ai.txt
+    note: >-
+      Not a /.well-known/ path, but a real machine-readable YAML-ish site manifest that the www
+      ai-plugin.json explicitly advertises. Carries company identity, product list, supported
+      chains, investors and the Supertransaction API entry. Saved verbatim.
+  - url: https://docs.biconomy.io/llms.txt
+    status: 200
+    file: ../llms/biconomy-llms.txt
+  - url: https://www.biconomy.io/llms.txt
+    status: 200
+    file: ../llms/biconomy-www-llms.txt
+gaps:
+  - >-
+    No security.txt (RFC 9116) on any host — there is no machine-readable route to report a
+    vulnerability in the API surface, despite Biconomy publishing four smart-contract audits.
+  - >-
+    No /.well-known/api-catalog (RFC 9727) on any host.
+  - >-
+    The www ai-plugin.json points api.url at https://docs.biconomy.io/openapi.json, which
+    returns 404 "Asset not found". Biconomy's own machine-readable manifest names a dead spec
+    URL; the working one is https://docs.biconomy.io/supertransaction-api/openapi.yaml, which
+    the docs-host manifest names correctly. An agent that trusts the www manifest gets nothing.
+  - >-
+    No OAuth/OIDC metadata anywhere, consistent with the API using a static project-scoped
+    X-API-Key rather than a delegated authorization flow.

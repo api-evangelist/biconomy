@@ -1,16 +1,108 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/biconomy-supertransaction-api-openapi.yml
+generated: '2026-08-24'
+method: searched
+source: >-
+  Derived from the securitySchemes in openapi/biconomy-root-api-openapi.yml (and the live specs at
+  https://docs.biconomy.io/supertransaction-api/openapi.yaml and
+  https://www.biconomy.io/openapi.json), then upgraded from the published docs at
+  https://docs.biconomy.io/overview/supertransaction-api and a live unauthenticated probe of
+  https://network.biconomy.io/v1/explorer/{hash} on 2026-08-24.
+docs: https://docs.biconomy.io/overview/supertransaction-api
+provider: Biconomy
+providerId: biconomy
+description: >-
+  One credential, two hosts, two conventions. The project API key issued from the Biconomy
+  Dashboard is sent as X-API-Key to api.biconomy.io and as an Authorization Bearer token to
+  network.biconomy.io. There is no OAuth, no OIDC, no delegated identity and no scope system at
+  the HTTP layer — authorization of what an agent may actually DO is pushed down to the on-chain
+  Smart Sessions policy module, not expressed in the API credential.
 summary:
   types:
-  - apiKey
+    - apiKey
+    - http-bearer
   api_key_in:
-  - header
+    - header
+  oauth2: false
+  openid_connect: false
+  mutual_tls: false
+  scopes: none
 schemes:
-- name: X-API-Key
-  type: apiKey
-  in: header
-  parameter: X-API-Key
-  description: 'API Key required to access Supertransaction API. Example: mee_2w3mXCuyt4xVXDRCZ5k5Lhgs'
-  sources:
-  - openapi/biconomy-supertransaction-api-openapi.yml
+  - name: X-API-Key
+    type: apiKey
+    in: header
+    parameter: X-API-Key
+    host: https://api.biconomy.io
+    description: >-
+      Project-scoped API key required by every Supertransaction API operation. Issued from
+      https://dashboard.biconomy.io. Published example prefix is `mee_`.
+    issuance_url: https://dashboard.biconomy.io
+    key_prefix: mee_
+    rotation_policy: not published
+    test_key_separation: false
+    sources:
+      - openapi/biconomy-root-api-openapi.yml
+      - openapi/biconomy-mee-api-openapi.yml
+      - openapi/biconomy-instructions-api-openapi.yml
+      - https://docs.biconomy.io/supertransaction-api/openapi.yaml
+  - name: Authorization Bearer
+    type: http
+    scheme: bearer
+    in: header
+    host: https://network.biconomy.io
+    description: >-
+      The MEE explorer/status surface takes the same dashboard-issued key as a Bearer token.
+      Documented in https://docs.biconomy.io/llms.txt as
+      "GET network.biconomy.io/v1/explorer/{hash}, Authorization: Bearer YOUR_API_KEY".
+    method: probed
+    probed: '2026-08-24'
+    evidence:
+      url: https://network.biconomy.io/v1/explorer/0x0
+      http_status: 401
+      body: >-
+        {"errors":["API key required. Please visit https://dashboard.biconomy.io or join Biconomy
+        Builders T..."]}
+    sources:
+      - https://docs.biconomy.io/llms.txt
+      - https://docs.biconomy.io/overview/supertransaction-api/execute
+  - name: x-api-key (lowercase)
+    type: apiKey
+    in: header
+    parameter: x-api-key
+    host: https://dashboard.biconomy.io
+    description: >-
+      The Dashboard Public API (GET /api/public/projects/me/supertransactions) takes the same
+      project key in a lowercase x-api-key header, per the worked example at
+      https://docs.biconomy.io/overview/supertransaction-api/history-and-costs. HTTP header names
+      are case-insensitive so this is not a functional difference, but it is a third documented
+      spelling of the same credential and worth recording as such.
+    sources:
+      - https://docs.biconomy.io/overview/supertransaction-api/history-and-costs
+delegated_authorization:
+  http_layer: none
+  onchain_layer: Smart Sessions
+  detail: >-
+    Biconomy's answer to delegation is not an OAuth scope — it is an on-chain session grant. A user
+    grants a session key a set of policies (Sudo, Universal Action with parameter-level spending
+    caps, Time Range, Usage Limit) enforced by the ERC-7579 session module. The consequence is
+    real and cuts both ways: the permission boundary is stronger than a bearer scope because it is
+    enforced by contract rather than by the API, but it is invisible to any HTTP-layer tooling —
+    an API gateway, an MCP client or an agent framework inspecting the credential learns nothing
+    about what the holder may do.
+  docs: https://docs.biconomy.io/agents-automation/policies
+discovery:
+  oauth_authorization_server: 404
+  oauth_protected_resource: 404
+  openid_configuration: 404
+  probed: '2026-08-24'
+  note: >-
+    All three probed on api.biconomy.io and docs.biconomy.io. No authorization-server metadata
+    exists, so an MCP client cannot bind a user to a Biconomy project through a standard flow.
+gaps:
+  - >-
+    No key rotation, expiry or revocation procedure is published, and no scope or permission model
+    attaches to the key — an API key is all-or-nothing against the project.
+  - >-
+    No separate test credential. A key cannot be inspected to tell whether it points at test or
+    live; separation is by chain ID and base URL only.
+  - >-
+    The same secret is presented under two different header conventions on two hosts, which is a
+    small but real source of integration error.

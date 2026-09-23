@@ -1,0 +1,726 @@
+# Biconomy
+
+> Biconomy is the onchain orchestration layer for multi-chain applications. Compose multi-step, cross-chain blockchain workflows — swaps, bridges, DeFi deposits, custom contract calls — into a single user signature. Powered by the Modular Execution Environment (MEE), which handles sequencing, runtime parameter injection, bridge timing, gas abstraction, and failure recovery across 20+ EVM chains. No smart contracts required.
+
+---
+
+## Canonical Page List (Priority Order)
+
+For AI agents, read these pages in order of relevance:
+
+1. **Introduction** - https://docs.biconomy.io/overview/introduction - Platform overview and core capabilities
+2. **Orchestration Explained** - https://docs.biconomy.io/new/learn-about-biconomy/understanding-composable-orchestration - How composable orchestration works
+3. **What is MEE** - https://docs.biconomy.io/new/learn-about-biconomy/what-is-mee - The Modular Execution Environment
+4. **Supertransaction API Overview** - https://docs.biconomy.io/overview/supertransaction-api - REST API for orchestrated workflows
+5. **Get Quote (Instruction Types)** - https://docs.biconomy.io/overview/supertransaction-api/get-quote - All composeFlows instruction types
+6. **AbstractJS SDK Overview** - https://docs.biconomy.io/overview/abstractjs - TypeScript SDK for orchestration
+7. **Composable Batching** - https://docs.biconomy.io/overview/abstractjs/composable-batching - Runtime injection and chained operations
+8. **Cross-Chain Orchestration** - https://docs.biconomy.io/overview/abstractjs/cross-chain - Multi-chain single-signature flows
+9. **Quote EOA Mode** - https://docs.biconomy.io/overview/supertransaction-api/quote-eoa - External wallets (MetaMask, Rabby)
+10. **Quote Smart Account Mode** - https://docs.biconomy.io/overview/supertransaction-api/quote-smart-account - Managed account mode
+11. **Quote EIP-7702 Mode** - https://docs.biconomy.io/overview/supertransaction-api/quote-7702 - Embedded wallets (Privy, Dynamic, Turnkey)
+12. **Sign Payload** - https://docs.biconomy.io/overview/supertransaction-api/sign-payload - Signing formats by mode
+13. **Execute** - https://docs.biconomy.io/overview/supertransaction-api/execute - Execution and tracking
+14. **Agents & Automation** - https://docs.biconomy.io/agents-automation - Smart Sessions for delegated execution
+15. **Zaps (DeFi Vaults)** - https://docs.biconomy.io/zaps - One-click vault deposits/withdrawals across 200+ protocols
+16. **Swaps & Trading** - https://docs.biconomy.io/swaps-trading - Cross-chain swaps, limit orders, advanced trading
+17. **Conditional Execution** - https://docs.biconomy.io/overview/abstractjs/conditional-execution - Trigger on on-chain conditions (price oracles, balances)
+18. **Cleanup Transactions** - https://docs.biconomy.io/overview/abstractjs/cleanup - Cross-chain failure recovery
+19. **Supported Chains** - https://docs.biconomy.io/contracts-and-audits/supported-chains - All supported networks
+
+---
+
+## Minimal Endpoint Set for Agents
+
+Base URL: `https://api.biconomy.io`
+
+### 1. POST /v1/quote — Get orchestration quote (MOST IMPORTANT)
+```
+POST https://api.biconomy.io/v1/quote
+Headers: Content-Type: application/json, X-API-Key: YOUR_API_KEY
+Body: { "mode": "smart-account", "ownerAddress": "0x...", "composeFlows": [...] }
+```
+Returns: Quote with `payloadToSign`, fee estimate, routing info, and expected outputs.
+
+### 2. POST /v1/execute — Submit signed quote
+```
+POST https://api.biconomy.io/v1/execute
+Headers: Content-Type: application/json
+Body: { ...quote, "payloadToSign": [{ ...payload, "signature": "0x..." }] }
+```
+Returns: `{ success: true, supertxHash: "0x..." }` — accepted for execution (not yet complete).
+
+### 3. GET /v1/explorer/{hash} — Track execution status
+```
+GET https://network.biconomy.io/v1/explorer/{supertxHash}
+Headers: Authorization: Bearer YOUR_API_KEY
+```
+Returns: Status (SUCCESS, FAILED) with execution details.
+
+### MEE Explorer (Visual)
+```
+https://meescan.biconomy.io/details/{supertxHash}
+```
+
+---
+
+## Decision Rules for Agents
+
+### When to use each integration:
+- **Any language, rapid DeFi integration**: Use **Supertransaction API** — REST calls, pre-built routing for 200+ DeFi protocols, no calldata encoding
+- **TypeScript, custom logic, fine-grained control**: Use **AbstractJS SDK** — viem-inspired, type-safe, custom calldata and gas limits
+- **Both use the same**: API key, MEE engine, and supported chains
+
+### Which account mode:
+- **MetaMask / Rabby / Trust Wallet** (external): `mode: "eoa"` — Fusion execution, requires `fundingTokens` + withdrawal instruction
+- **Managed accounts**: `mode: "smart-account"` — simplest, one signature, cross-chain gas
+- **Privy / Dynamic / Turnkey** (embedded): `mode: "eoa-7702"` — handle 412 authorization on first use
+
+### The pattern (always the same):
+```
+1. Build composeFlows → 2. POST /v1/quote → 3. User signs once → 4. POST /v1/execute → 5. Track via supertxHash
+```
+
+### Status handling:
+```
+success: true   → Accepted for execution, NOT complete — poll /v1/explorer/{hash}
+SUCCESS         → Fully completed on-chain
+FAILED          → Check MEE Explorer for details
+```
+
+### Error recovery:
+- 412 (EIP-7702 first-time): Sign authorizations and retry quote
+- Quote expired (~30s): Get a fresh quote before signing
+- No route found: Try different tokens, reduce amount, increase slippage
+- Tokens stuck (EOA mode): Add withdrawal instruction with `runtimeErc20Balance`
+
+### Common chain IDs:
+- Ethereum: 1
+- Base: 8453
+- Arbitrum: 42161
+- Optimism: 10
+- Polygon: 137
+- BSC: 56
+- Scroll: 534352
+- Sonic: 146
+
+---
+
+## Overview
+
+Biconomy is the orchestration layer for onchain applications. Write multi-step, multi-chain workflows in TypeScript or REST — MEE handles the hard parts:
+
+- **Sequencing & dependencies** — operations execute in order, each using outputs from the previous step
+- **Runtime parameter injection** — no guessing swap outputs; use exact balances at execution time
+- **Asynchronous execution** — MEE waits for bridges, oracle updates, and balance arrivals automatically
+- **Atomic same-chain batching** — all-or-nothing execution within a single chain
+- **Cross-chain coordination** — bridge timing, gas management, execution ordering handled automatically
+- **Graceful failure recovery** — cleanup transactions return unused funds to users
+- **Universal gas abstraction** — pay in any ERC-20 token (USDC, LP tokens, yield tokens) or sponsor gas entirely
+
+### What Orchestration Replaces
+
+| Without Biconomy | With Biconomy |
+|-----------------|---------------|
+| 6+ transactions for a cross-chain DeFi deposit | 1 signature, 1 flow |
+| Custom Solidity contracts for each workflow | TypeScript / REST API — no contracts, no audits |
+| Guess swap outputs, risk failures or dust | Runtime injection uses exact balances |
+| Manual bridge timing and polling | MEE waits and retries automatically |
+| Users need native gas on every chain | Pay gas in USDC or get sponsored |
+| Months of development + audit costs | Minutes of development, $0 audits, instant updates |
+
+---
+
+## Products
+
+### 1. Supertransaction REST API
+
+Orchestrate multi-chain workflows via REST — no blockchain code required.
+
+- **Base URL**: `https://api.biconomy.io`
+- **Explorer**: `https://meescan.biconomy.io`
+- **OpenAPI Spec**: https://docs.biconomy.io/supertransaction-api/openapi.yaml
+- **Dashboard**: https://dashboard.biconomy.io
+
+#### Key Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/v1/quote` | POST | Get orchestration quote with signable payload |
+| `/v1/execute` | POST | Submit signed quote for execution |
+| `/v1/explorer/{hash}` | GET | Track Supertransaction status (via network.biconomy.io) |
+
+#### Instruction Types (composeFlows)
+
+Five instruction types that compose freely in the `composeFlows` array:
+
+| Type | Purpose | Key Feature |
+|------|---------|-------------|
+| `/instructions/intent-simple` | Token swaps (same-chain or cross-chain) | Automatic routing across DEXs and bridges |
+| `/instructions/build` | Custom contract calls with function signature | `runtimeErc20Balance` for dynamic amounts |
+| `/instructions/build-raw` | Pre-encoded calldata | For external systems, no runtime injection |
+| `/instructions/intent` | Multi-token portfolio rebalancing | Weighted target positions (must sum to 1.0) |
+| `/instructions/intent-vault` | DeFi vault zaps (deposit/withdraw) | 200+ protocols: AAVE, Morpho, Yearn, Beefy, Compound, Lido, Curve |
+
+#### Account Modes
+
+| Feature | EOA (`eoa`) | Smart Account (`smart-account`) | EIP-7702 (`eoa-7702`) |
+|---------|-------------|--------------------------------|----------------------|
+| Wallet support | MetaMask, Rabby, any extension | Managed accounts | Privy, Dynamic, Turnkey |
+| `fundingTokens` | Required | Not needed | Not needed |
+| Signatures | 1 per funding token | Always 1 | Always 1 |
+| Gas payment | Same-chain only | Any chain | Any chain |
+| Withdrawal needed | Yes (tokens route through temp account) | No | No |
+
+#### Example: Cross-Chain Swap (Single Signature)
+
+```typescript
+const quote = await fetch('https://api.biconomy.io/v1/quote', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+  body: JSON.stringify({
+    mode: 'smart-account',
+    ownerAddress: '0x...',
+    composeFlows: [{
+      type: '/instructions/intent-simple',
+      data: {
+        srcChainId: 8453, dstChainId: 10,
+        srcToken: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+        dstToken: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
+        amount: '100000000', slippage: 0.01
+      }
+    }]
+  })
+}).then(r => r.json());
+
+const payload = quote.payloadToSign[0];
+const signature = await walletClient.signTypedData({ ...payload.signablePayload, account });
+
+const result = await fetch('https://api.biconomy.io/v1/execute', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ ...quote, payloadToSign: [{ ...payload, signature }] })
+}).then(r => r.json());
+// Track: https://meescan.biconomy.io/details/{result.supertxHash}
+```
+
+#### Example: Composable Multi-Step (Swap + Approve + DeFi Deposit)
+
+The key orchestration feature — each step uses outputs from the previous one:
+
+```typescript
+composeFlows: [
+  // Step 1: Swap USDC → WETH
+  {
+    type: '/instructions/intent-simple',
+    data: { srcChainId: 8453, dstChainId: 8453, srcToken: USDC, dstToken: WETH, amount: '100000000', slippage: 0.01 }
+  },
+  // Step 2: Approve — uses runtime balance (exact WETH received from swap)
+  {
+    type: '/instructions/build',
+    data: {
+      functionSignature: 'function approve(address spender, uint256 amount)',
+      args: [AAVE_POOL, { type: 'runtimeErc20Balance', tokenAddress: WETH }],
+      to: WETH, chainId: 8453, gasLimit: '80000'
+    }
+  },
+  // Step 3: Deposit — again uses runtime balance, no guessing
+  {
+    type: '/instructions/build',
+    data: {
+      functionSignature: 'function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)',
+      args: [WETH, { type: 'runtimeErc20Balance', tokenAddress: WETH }, ownerAddress, 0],
+      to: AAVE_POOL, chainId: 8453, gasLimit: '350000'
+    }
+  }
+]
+```
+
+#### Example: Cross-Chain Orchestration (Bridge + DeFi on Destination)
+
+```typescript
+composeFlows: [
+  // Step 1: Bridge USDC from Base to Optimism
+  {
+    type: '/instructions/intent-simple',
+    data: { srcChainId: 8453, dstChainId: 10, srcToken: USDC_BASE, dstToken: USDT_OP, amount: '500000000', slippage: 0.01 }
+  },
+  // Step 2: Deposit into vault on Optimism — MEE waits for bridge to complete
+  {
+    type: '/instructions/build',
+    data: {
+      functionSignature: 'function deposit(uint256 amount)',
+      args: [{ type: 'runtimeErc20Balance', tokenAddress: USDT_OP, constraints: { gte: '1' } }],
+      to: VAULT_ON_OP, chainId: 10, gasLimit: '350000'
+    }
+  }
+]
+```
+
+#### Example: One-Click DeFi Zap (Any Token → Any Vault)
+
+```typescript
+composeFlows: [{
+  type: '/instructions/intent-vault',
+  data: {
+    srcChainId: 8453, srcToken: USDC_BASE,
+    dstChainId: 1, dstVault: '0xAaveVaultOnMainnet...',
+    amount: '10000000000', slippage: 0.01
+  }
+}]
+```
+
+Supported protocols: AAVE, Compound, Morpho, Yearn, Beefy, Convex, Lido, Uniswap LP, Curve, and 200+ more.
+
+### 2. AbstractJS SDK (TypeScript)
+
+Type-safe SDK for orchestrating workflows — viem-inspired API wrapping the same MEE engine.
+
+- **NPM Package**: `@biconomy/abstractjs`
+- **Peer Dependency**: `viem`
+- **Documentation**: https://docs.biconomy.io/overview/abstractjs
+
+#### Installation
+
+```bash
+npm install @biconomy/abstractjs viem
+```
+
+#### Quick Start
+
+```typescript
+import { createMeeClient, toMultichainNexusAccount, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
+import { http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { base, optimism } from "viem/chains";
+
+const signer = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`);
+
+const account = await toMultichainNexusAccount({
+  signer,
+  chainConfigurations: [
+    { chain: optimism, transport: http(), version: getMEEVersion(MEEVersion.V2_2_3) },
+    { chain: base, transport: http(), version: getMEEVersion(MEEVersion.V2_2_3) }
+  ]
+});
+
+const meeClient = await createMeeClient({ account });
+```
+
+#### Composable Orchestration (The Core Feature)
+
+Chain operations where each step uses exact outputs from the previous one via runtime injection:
+
+```typescript
+const swap = await account.buildComposable({
+  type: "default",
+  data: { chainId: base.id, to: DEX, abi: dexAbi, functionName: "swap", args: [USDC, WETH, amount] }
+});
+
+const deposit = await account.buildComposable({
+  type: "default",
+  data: {
+    chainId: base.id, to: VAULT, abi: vaultAbi, functionName: "deposit",
+    args: [
+      runtimeERC20BalanceOf({
+        tokenAddress: WETH,
+        targetAddress: account.addressOn(base.id, true),
+        constraints: [greaterThanOrEqualTo(1n)]
+      }),
+      account.addressOn(base.id, true)
+    ]
+  }
+});
+
+const quote = await meeClient.getQuote({
+  instructions: [swap, deposit],
+  feeToken: { address: USDC, chainId: base.id }
+});
+
+const { hash } = await meeClient.executeQuote({ quote });
+const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+```
+
+#### Runtime Functions (Parameter Injection)
+
+Values resolved at execution time — essential for composable flows:
+
+| Function | Description |
+|----------|-------------|
+| `runtimeERC20BalanceOf({ tokenAddress, targetAddress, constraints? })` | Inject token balance |
+| `runtimeNativeBalanceOf({ targetAddress, constraints? })` | Inject native ETH balance (v2.2.0+) |
+| `runtimeERC20AllowanceOf({ owner, spender, tokenAddress, constraints? })` | Inject token allowance |
+| `runtimeParamViaCustomStaticCall({ targetContractAddress, functionAbi, functionName, args })` | Read any view function (v2.2.0+) |
+
+**Constraints**: `greaterThanOrEqualTo(value)`, `lessThanOrEqualTo(value)`, `equalTo(value)` — MEE retries until satisfied. This is how async execution works: MEE simulates → constraint not met → waits → retries → constraint met → executes.
+
+#### Instruction Types
+
+| Type | Purpose |
+|------|---------|
+| `"default"` | Generic contract call (abi + functionName + args) |
+| `"transfer"` | ERC-20 transfer (tokenAddress + recipient + amount) |
+| `"approve"` | ERC-20 approval (tokenAddress + spender + amount) |
+| `"nativeTokenTransfer"` | ETH/native token transfer (to + value) |
+
+#### Cross-Chain with Cleanup (Failure Safety)
+
+```typescript
+const quote = await meeClient.getQuote({
+  instructions: [bridge, swapOnDestination, depositOnDestination],
+  cleanUps: [{ chainId: base.id, tokenAddress: USDC, recipientAddress: userEOA, dependsOn: [userOp(2)] }],
+  feeToken: { chainId: base.id, address: USDC }
+});
+```
+
+Cross-chain operations are NOT atomic — cleanup transactions return unused funds if later steps fail.
+
+#### Client Methods
+
+| Method | Description |
+|--------|-------------|
+| `getQuote(options)` | Get orchestration quote |
+| `getFusionQuote(options)` | Get quote for external wallets (MetaMask, Rabby) |
+| `executeQuote({ quote })` | Execute a signed quote |
+| `executeFusionQuote({ fusionQuote })` | Execute a signed fusion quote |
+| `waitForSupertransactionReceipt({ hash })` | Wait for execution to complete |
+| `getSupertransactionReceipt({ hash })` | Get current status without waiting |
+
+#### Wallet Integration
+
+**Privy / Dynamic / Turnkey (EIP-7702)** — set `accountAddress` to the EOA:
+```typescript
+const account = await toMultichainNexusAccount({
+  signer,
+  chainConfigurations: [{
+    chain: base, transport: http(),
+    version: getMEEVersion(MEEVersion.V2_2_3),
+    accountAddress: signer.address
+  }]
+});
+```
+
+**MetaMask / Rabby (Fusion Mode)**:
+```typescript
+import { toFusionAccount, createMeeClient } from "@biconomy/abstractjs";
+const fusionAccount = await toFusionAccount({ address: walletClient.account.address, client: walletClient, chains: [optimism, base] });
+const meeClient = await createMeeClient({ account: fusionAccount });
+```
+
+### 3. Smart Sessions (Agents & Automation)
+
+Delegated execution for AI agents, bots, and automated strategies. Users grant scoped, time-limited, revocable permissions — enforced onchain.
+
+- **Documentation**: https://docs.biconomy.io/agents-automation
+
+#### How It Works
+
+```
+1. Generate agent key pair
+2. User grants permissions (single signature) → contracts, functions, spending caps, time bounds
+3. Agent orchestrates workflows within boundaries → no additional user signatures needed
+```
+
+#### Session Policies
+
+| Policy | Description |
+|--------|-------------|
+| `getSudoPolicy()` | Full access to specified functions |
+| `getUniversalActionPolicy({ rules, valueLimitPerUse })` | Parameter-level control with spending limits |
+| Time Range (`sessionValidAfter` / `sessionValidUntil`) | Temporal restrictions |
+| Usage Limit (`usageLimit`) | Action count caps |
+
+#### Agent Use Cases
+
+- **AI Trading Agents**: Execute trades based on market signals with spending caps
+- **Yield Optimization**: Move funds to highest-yielding DeFi protocols across chains
+- **Portfolio Rebalancing**: Maintain target allocations automatically
+- **Subscription Payments**: Recurring payments with amount and recipient restrictions
+
+---
+
+## How Orchestration Works (MEE Architecture)
+
+### The Modular Execution Environment (MEE)
+
+MEE is Biconomy's infrastructure layer. It operates through orchestrator nodes that:
+
+1. Accept a single user signature
+2. Execute multiple operations across chains
+3. Handle all timing, dependencies, and bridge confirmations
+4. Inject runtime parameters (exact balances, allowances, contract reads)
+5. Retry with simulation-based waiting until constraints are met
+6. Manage gas across chains
+
+### Execution Flow
+
+```
+1. App builds instructions (composeFlows or buildComposable)
+2. POST /v1/quote → MEE computes optimal routes, gas, and signable payload
+3. User signs once
+4. POST /v1/execute → MEE orchestrates on-chain execution:
+   - Same-chain operations: atomic (all or nothing)
+   - Cross-chain operations: sequential with automatic bridge waiting
+   - Runtime values: resolved at execution time via simulation
+   - Failures: cleanup transactions return funds to user
+5. Track via supertxHash on MEE Explorer
+```
+
+### Key Concept: Simulation-Based Async Execution
+
+MEE doesn't use event listeners or callbacks. Instead:
+1. MEE simulates the next instruction
+2. If simulation fails (e.g., tokens haven't arrived from bridge), MEE waits and retries
+3. When constraints are satisfied and simulation succeeds, the transaction executes
+
+This makes cross-chain orchestration work without complex infrastructure.
+
+---
+
+## Supported Chains
+
+| Chain | ID | Native Token |
+|-------|----|-------------|
+| Ethereum | 1 | ETH |
+| Base | 8453 | ETH |
+| Polygon | 137 | POL |
+| Arbitrum | 42161 | ETH |
+| Optimism | 10 | ETH |
+| BSC | 56 | BNB |
+| Sonic | 146 | S |
+| Scroll | 534352 | ETH |
+| Gnosis | 100 | xDAI |
+| Avalanche | 43114 | AVAX |
+| Apechain | 33139 | APE |
+| Hyper EVM | - | HYPE |
+| Sei | - | SEI |
+| Unichain | - | ETH |
+| Monad | - | MON |
+| Katana | - | ETH |
+| Lisk | - | ETH |
+| Worldchain | - | ETH |
+| Plasma | - | ETH |
+
+One API key covers all chains. Testnets available for most chains.
+
+---
+
+## Gas Abstraction
+
+### Sponsored (Gasless)
+Omit `feeToken` (API) or set `sponsorship: true` (SDK). Requires API key with sponsorship enabled in dashboard.
+
+### User Pays in Any ERC-20
+Set `feeToken: { address: "0xUSDC...", chainId: 8453 }`. Works with any ERC-20 that has liquidity: USDC, USDT, DAI, WETH, LP tokens, yield tokens, governance tokens.
+
+### Cross-Chain Gas
+Execute on Arbitrum, pay gas from Base USDC. Users never need native tokens.
+
+---
+
+## Key Concepts
+
+### Supertransaction
+A multi-step, multi-chain workflow that executes with a single user signature. Contains instructions (composeFlows) that MEE orchestrates across chains with automatic sequencing, dependency resolution, and failure recovery.
+
+### MEE (Modular Execution Environment)
+The orchestration engine. Handles sequencing, runtime parameter injection, bridge timing, gas abstraction, simulation-based async execution, and cleanup. Replaces custom smart contract development.
+
+### Runtime Parameter Injection
+Dynamic values resolved at execution time. API: `runtimeErc20Balance` in `/instructions/build` args. SDK: `runtimeERC20BalanceOf`, `runtimeNativeBalanceOf`, `runtimeERC20AllowanceOf`. Essential for composable flows — no guessing swap outputs.
+
+### Constraints
+Control when instructions execute. `greaterThanOrEqualTo`, `lessThanOrEqualTo`, `equalTo`. MEE uses simulation-based waiting: simulate → fail → wait → retry → succeed → execute.
+
+### Cleanup Transactions
+Safety net for cross-chain flows. Transfer remaining tokens back to the user if a later step fails. Critical because cross-chain operations are NOT atomic.
+
+### Fusion Execution
+EOA mode for external wallets (MetaMask, Rabby). Tokens route through a temporary account — always add a withdrawal instruction.
+
+### Conditional Execution
+Trigger transactions based on on-chain conditions (price oracles, balance thresholds). GTE/LTE/EQ comparisons on any view function. Set `upperBoundTimestamp` so orders expire.
+
+---
+
+## Slippage Guidelines
+
+| Pair Type | Recommended Slippage |
+|-----------|---------------------|
+| Stablecoin → Stablecoin | 0.005 (0.5%) |
+| Stable → Volatile | 0.01 (1%) |
+| Volatile → Volatile (long bridge) | 0.03 (3%) |
+| Complex multi-chain rebalancing | 0.02–0.03 (2–3%) |
+
+---
+
+## Security
+
+- **Audited by**: Cyfrin, Spearbit, Zenith, Pashov (four independent auditors)
+- **Non-custodial**: Users maintain control of funds at all times
+- **Platform metrics**: 70M+ transactions processed, $3.5B+ volume
+- **Audit details**: https://docs.biconomy.io/contracts-and-audits
+
+---
+
+## Getting an API Key
+
+1. Go to [dashboard.biconomy.io](https://dashboard.biconomy.io)
+2. Create a project on the **Supertransaction** tab
+3. Enable **sponsorship** if you want gasless transactions
+4. Copy your API key (starts with `mee_`)
+
+One API key covers all chains. Sponsorship is post-paid.
+
+---
+
+## Common Errors
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| 412 status code | First-time EIP-7702 authorization needed | Sign authorizations and retry quote |
+| Invalid signature | Wrong signing method for quoteType | Check quoteType → use correct method |
+| Insufficient balance | Not enough tokens for operation + fees | Verify balance covers amount + fee |
+| Quote expired | Quotes valid ~30 seconds | Get fresh quote before signing |
+| No route found | Token pair unsupported or low liquidity | Try different tokens, reduce amount |
+| Tokens stuck (EOA mode) | Missing withdrawal instruction | Add build instruction with `runtimeErc20Balance` to transfer back |
+| `success: true` but failed | On-chain conditions changed | Check MEE Explorer for details |
+| Sponsorship not working | API key missing sponsorship or `feeToken` is set | Enable in dashboard, omit `feeToken` |
+
+---
+
+## Use Cases
+
+1. **Cross-chain swaps**: Any token on any chain → any token on any other chain, single signature
+2. **Composable DeFi workflows**: Swap + approve + deposit in one atomic flow, no dust
+3. **DeFi zaps**: One-click deposits into AAVE, Morpho, Yearn, Beefy, and 200+ protocols
+4. **Cross-chain DeFi**: Bridge from Base, deposit into vault on Optimism — MEE waits for the bridge
+5. **AI trading agents**: Delegated execution with spending caps, time limits, contract restrictions
+6. **Portfolio rebalancing**: Multi-token, multi-chain with weighted targets
+7. **Limit orders**: Conditional execution triggered by on-chain price oracles
+8. **Gasless onboarding**: Sponsor users' first transactions, zero native tokens required
+
+---
+
+## Documentation Pages
+
+### Basics
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Introduction | https://docs.biconomy.io/overview/introduction | Platform overview and core capabilities |
+| What is MEE | https://docs.biconomy.io/new/learn-about-biconomy/what-is-mee | Modular Execution Environment explained |
+| Orchestration Explained | https://docs.biconomy.io/new/learn-about-biconomy/understanding-composable-orchestration | Composable async orchestration deep dive |
+| Choosing Your Stack | https://docs.biconomy.io/new/learn-about-biconomy/choosing-stack | Supertransaction API vs AbstractJS SDK |
+| Supertransaction API | https://docs.biconomy.io/overview/supertransaction-api | REST API overview |
+| Get Quote | https://docs.biconomy.io/overview/supertransaction-api/get-quote | All instruction types and parameters |
+| Quote EOA | https://docs.biconomy.io/overview/supertransaction-api/quote-eoa | External wallet integration |
+| Quote Smart Account | https://docs.biconomy.io/overview/supertransaction-api/quote-smart-account | Managed account mode |
+| Quote EIP-7702 | https://docs.biconomy.io/overview/supertransaction-api/quote-7702 | Embedded wallet mode |
+| Sign Payload | https://docs.biconomy.io/overview/supertransaction-api/sign-payload | Signing formats by mode |
+| Execute | https://docs.biconomy.io/overview/supertransaction-api/execute | Execution and tracking |
+| AbstractJS Overview | https://docs.biconomy.io/overview/abstractjs | SDK overview |
+| AbstractJS Setup | https://docs.biconomy.io/overview/abstractjs/setup | Installation and configuration |
+| Working with Testnets | https://docs.biconomy.io/overview/abstractjs/working-with-testnets | Testnet configuration |
+| Estimating Gas | https://docs.biconomy.io/overview/abstractjs/estimating-gas | Simulation and gas estimation |
+| Batch Calls | https://docs.biconomy.io/overview/abstractjs/batch-calls | Atomic batching on same chain |
+| Cross-Chain | https://docs.biconomy.io/overview/abstractjs/cross-chain | Multi-chain orchestration |
+| Composable Batching | https://docs.biconomy.io/overview/abstractjs/composable-batching | Runtime injection and chaining |
+| Conditional Execution | https://docs.biconomy.io/overview/abstractjs/conditional-execution | Trigger on on-chain conditions |
+| Cleanup Transactions | https://docs.biconomy.io/overview/abstractjs/cleanup | Cross-chain failure recovery |
+
+### Wallet Integrations
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Overview | https://docs.biconomy.io/wallet-integrations | Wallet integration guide |
+| Privy (AbstractJS) | https://docs.biconomy.io/wallet-integrations/privy/abstractjs | Privy embedded wallet + SDK |
+| Privy (API) | https://docs.biconomy.io/wallet-integrations/privy/api | Privy embedded wallet + REST API |
+| Turnkey (AbstractJS) | https://docs.biconomy.io/wallet-integrations/turnkey/abstractjs | Turnkey + SDK |
+| Turnkey (API) | https://docs.biconomy.io/wallet-integrations/turnkey/api | Turnkey + REST API |
+| Para (AbstractJS) | https://docs.biconomy.io/wallet-integrations/para/abstractjs | Para + SDK |
+| Para (API) | https://docs.biconomy.io/wallet-integrations/para/api | Para + REST API |
+| External Wallets (AbstractJS) | https://docs.biconomy.io/wallet-integrations/external-wallets/abstractjs | MetaMask/Rabby Fusion + SDK |
+| External Wallets (API) | https://docs.biconomy.io/wallet-integrations/external-wallets/api | MetaMask/Rabby Fusion + REST API |
+
+### Swaps & Trading
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Overview | https://docs.biconomy.io/swaps-trading | Swaps and trading introduction |
+| Speeding Up Quotes | https://docs.biconomy.io/swaps-trading/speeding-up-quotes | fast-quote mode for UI previews |
+| Gasless Swap | https://docs.biconomy.io/swaps-trading/gasless-swap | Sponsored swap tutorial |
+| Cross-Chain Swap | https://docs.biconomy.io/swaps-trading/cross-chain-swap | Multi-chain swap tutorial |
+| Limit Order | https://docs.biconomy.io/swaps-trading/limit-order | Conditional execution limit orders |
+
+### Zaps (DeFi Vaults)
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Overview | https://docs.biconomy.io/zaps | One-click DeFi vault operations |
+| Token to Vault | https://docs.biconomy.io/zaps/token-to-vault | Deposit tokens into DeFi vaults |
+| Vault to Token | https://docs.biconomy.io/zaps/vault-to-token | Withdraw from vaults to tokens |
+| Vault to Vault | https://docs.biconomy.io/zaps/vault-to-vault | Move between vaults directly |
+
+### Agents & Automation
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Introduction | https://docs.biconomy.io/agents-automation | Smart Sessions overview and agent use cases |
+| Implementation | https://docs.biconomy.io/agents-automation/implementation | Step-by-step code walkthrough |
+| Agent Types | https://docs.biconomy.io/agents-automation/agent-types | Trading, yield, rebalancing, payments |
+| Policies Overview | https://docs.biconomy.io/agents-automation/policies | Policy system overview |
+| Sudo Policy | https://docs.biconomy.io/agents-automation/policies/sudo | Full access to specified functions |
+| Universal Action | https://docs.biconomy.io/agents-automation/policies/universal-action | Parameter rules and spending caps |
+| Time Range | https://docs.biconomy.io/agents-automation/policies/time-range | Temporal restrictions |
+| Usage Limit | https://docs.biconomy.io/agents-automation/policies/usage-limit | Action count caps |
+
+### Gasless Apps
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Overview | https://docs.biconomy.io/gasless-apps | Gas abstraction introduction |
+| Sponsorship | https://docs.biconomy.io/gasless-apps/sponsorship | Sponsor gas for users |
+| Testnet Sponsorship | https://docs.biconomy.io/gasless-apps/testnet-sponsorship | Testing with sponsored gas |
+| Pay in Tokens | https://docs.biconomy.io/gasless-apps/pay-in-tokens | ERC-20 gas payment |
+
+### SDK Reference
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Overview | https://docs.biconomy.io/sdk-reference | AbstractJS reference index |
+| Account | https://docs.biconomy.io/sdk-reference/account | toMultichainNexusAccount, toFusionAccount |
+| Client | https://docs.biconomy.io/sdk-reference/client | createMeeClient, getQuote, executeQuote |
+| Instructions | https://docs.biconomy.io/sdk-reference/instructions | buildComposable, build |
+| Runtime | https://docs.biconomy.io/sdk-reference/runtime | Runtime functions and constraints |
+| Conditions | https://docs.biconomy.io/sdk-reference/conditions | createCondition, ConditionType |
+| Sessions | https://docs.biconomy.io/sdk-reference/sessions | Smart Sessions API |
+| Utilities | https://docs.biconomy.io/sdk-reference/utilities | Helper functions |
+
+---
+
+## API Specifications
+
+- [OpenAPI Spec](https://docs.biconomy.io/supertransaction-api/openapi.yaml)
+
+---
+
+## Resources
+
+### Documentation
+- **Main Docs**: https://docs.biconomy.io
+- **SDK Reference**: https://docs.biconomy.io/sdk-reference
+
+### Tools
+- **Dashboard**: https://dashboard.biconomy.io
+- **MEE Explorer**: https://meescan.biconomy.io
+- **API Base URL**: https://api.biconomy.io
+
+### Packages
+- **AbstractJS SDK**: https://www.npmjs.com/package/@biconomy/abstractjs
+
+### Source Code
+- **Nexus**: https://github.com/bcnmy/nexus
+
+### Support
+- **Twitter**: https://x.com/biconomy

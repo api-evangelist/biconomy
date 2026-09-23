@@ -1,3 +1,25 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  https://docs.biconomy.io/gasless-apps/sponsorship, https://docs.biconomy.io/overview/supertransaction-api,
+  https://dashboard.biconomy.io, and a probe of https://www.biconomy.io/pricing (2026-08-24).
+plan_count: 2
+published_rate_card: false
+pricing_page:
+  probed_url: https://www.biconomy.io/pricing
+  http_status: 200
+  usable: false
+  finding: >-
+    Biconomy publishes NO pricing page. https://www.biconomy.io/pricing returns HTTP 200, but
+    www.biconomy.io is a single-page app that answers 200 with the identical 10,969-byte shell for
+    every unrecognised path — https://www.biconomy.io/thisdoesnotexist12345 returns the same bytes.
+    The site's own sitemap.xml lists exactly five URLs (/, /trading, /agents, /gasless, /defi) and
+    /pricing is not among them. There is no list price, no free-tier quota and no published
+    overage rate anywhere on the Biconomy web surface; commercial terms are set per project inside
+    https://dashboard.biconomy.io. The plans below therefore describe the STRUCTURE of the
+    commercial model as documented, not a rate card, and no figure in them is a Biconomy list
+    price.
+  probed: '2026-08-24'
 specification: API Commons Plans
 specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans

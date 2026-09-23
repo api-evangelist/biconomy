@@ -1,0 +1,170 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  npm registry metadata (registry.npmjs.org), the bcnmy GitHub organization, and the
+  Biconomy SDK reference at https://docs.biconomy.io/sdk-reference. Versions and dates read
+  from registry.npmjs.org/<pkg> dist-tags + time on 2026-08-24.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  First-party Biconomy client libraries. AbstractJS (@biconomy/abstractjs) is the current,
+  actively-released TypeScript SDK and the one the docs and llms.txt point at. The @biconomy/*
+  v3/v4 family (account, bundler, paymaster, modules, common, node-client, core-types, use-aa)
+  and @biconomy/sdk are the superseded generations, all frozen since 2024/2025 — recorded here
+  because a consumer landing on them from an old tutorial cannot otherwise tell they are dead.
+  The @biconomy-devx/* scope is Biconomy's own pre-release channel, not a separate vendor.
+  No first-party Python, Go, Java, Ruby, .NET or Rust client is published; the REST
+  Supertransaction API is the documented path for non-TypeScript consumers.
+languages:
+  - TypeScript
+  - JavaScript
+packages:
+  - name: '@biconomy/abstractjs'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/abstractjs
+    repository: https://github.com/bcnmy/abstractjs
+    language: TypeScript
+    official: true
+    status: current
+    version: 2.0.0
+    published: '2026-08-07'
+    covers:
+      - Supertransaction API (MEE)
+      - Nexus smart account
+      - Smart Sessions
+    note: >-
+      The SDK the docs, llms.txt and .well-known/ai-plugin.json all name. Viem-inspired API —
+      toMultichainNexusAccount, createMeeClient, buildComposable, getQuote, executeQuote,
+      waitForSupertransactionReceipt.
+  - name: '@biconomy/abstractjs-canary'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/abstractjs-canary
+    repository: https://github.com/bcnmy/abstractjs
+    language: TypeScript
+    official: true
+    status: prerelease
+    version: 0.4.24
+    published: '2025-08-08'
+    note: Canary channel for AbstractJS. Behind the stable line; not for production use.
+  - name: '@biconomy/sdk'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/sdk
+    repository: https://github.com/bcnmy/sdk
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 0.0.29
+    published: '2025-01-16'
+    note: >-
+      Superseded by @biconomy/abstractjs. No release in over 19 months as of this pass — the
+      strongest published abandonment signal on the Biconomy package surface after the v3/v4 family.
+  - name: '@biconomy/account'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/account
+    repository: https://github.com/bcnmy/biconomy-client-sdk
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 4.5.7
+    published: '2024-10-11'
+    note: >-
+      Biconomy Smart Account v2 client. Superseded by Nexus + AbstractJS; docs publish a
+      V2-to-Nexus migration guide at https://docs.biconomy.io/upgrade-migrate/v2-to-nexus.
+  - name: '@biconomy/bundler'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/bundler
+    repository: https://github.com/bcnmy/biconomy-client-sdk
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 3.1.4
+    published: '2024-10-11'
+    note: ERC-4337 bundler client for the v3/v4 generation. Frozen.
+  - name: '@biconomy/paymaster'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/paymaster
+    repository: https://github.com/bcnmy/biconomy-client-sdk
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 3.1.4
+    published: '2024-10-11'
+    note: Paymaster client for the v3/v4 generation. Frozen.
+  - name: '@biconomy/modules'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/modules
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 3.1.4
+    published: '2024-10-11'
+    note: >-
+      ERC-4337 validation modules for the v2 account. Superseded by the ERC-7579 module model
+      in Nexus. No repository field published in the registry metadata.
+  - name: '@biconomy/common'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/common
+    repository: https://github.com/bcnmy/biconomy-client-sdk
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 3.1.4
+    published: '2024-10-11'
+  - name: '@biconomy/core-types'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/core-types
+    repository: https://github.com/bcnmy/biconomy-client-sdk
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 3.1.4
+    published: '2024-10-11'
+  - name: '@biconomy/node-client'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/node-client
+    repository: https://github.com/bcnmy/biconomy-client-sdk
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 3.1.4
+    published: '2024-10-11'
+    note: Indexer client for the v2 account generation. Frozen.
+  - name: '@biconomy/use-aa'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/use-aa
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 1.1.1
+    published: '2024-08-20'
+    note: >-
+      React hooks for the v2 account generation. No React binding exists for AbstractJS —
+      React consumers use AbstractJS directly.
+  - name: '@biconomy/passkey'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/passkey
+    language: TypeScript
+    official: true
+    status: superseded
+    version: 0.0.2
+    published: '2024-12-03'
+    note: Passkey validator plugin for the v2 SDK generation.
+  - name: '@biconomy/mexa'
+    registry: npm
+    url: https://www.npmjs.com/package/@biconomy/mexa
+    language: TypeScript
+    official: true
+    status: retired
+    version: 3.0.6
+    published: '2023-03-14'
+    note: >-
+      Mexa, Biconomy's original meta-transaction SDK. Predates account abstraction entirely.
+      Recorded for identification only — it wraps a product line Biconomy no longer sells.
+gaps:
+  - >-
+    No first-party non-TypeScript client. Python, Go, Java, .NET, Ruby and Rust consumers have
+    no published Biconomy SDK; the documented path is raw REST against https://api.biconomy.io.
+    Searched PyPI, pkg.go.dev, Maven Central, NuGet, RubyGems and crates.io — no first-party
+    package under a Biconomy name.
+  - >-
+    No first-party CLI is distributed on npm or anywhere else.

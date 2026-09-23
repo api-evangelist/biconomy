@@ -1,0 +1,113 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  https://docs.biconomy.io/upgrade-migrate/index, /upgrade-migrate/v2-to-nexus,
+  /upgrade-migrate/upgrade-mee-suite, /contracts-and-audits, /contracts-and-audits/supported-chains,
+  the published OpenAPI info.version values, npm registry release dates, and a live probe of
+  https://status.biconomy.io — all 2026-08-24.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  Biconomy versions its on-chain contracts far more rigorously than its HTTP API. Smart accounts
+  carry an explicit MEE "Suite" version (2.1.0, 2.2.0, 2.2.1, 2.2.2), a published per-chain
+  deployment matrix, an in-band upgrade-needed flag and a REST operation that produces the upgrade
+  transaction. The REST API itself has no version in its path, no version header, no changelog and
+  no deprecation policy — and its two published specs disagree about which operations exist.
+versioning:
+  api:
+    scheme: none-in-transport
+    path_prefix: /v1
+    detail: >-
+      Every operation sits under /v1 and there is no other version signal — no version header, no
+      date-based pinning, no Accept-header negotiation. The spec's own info.version moves
+      independently (0.4.0 on the docs host, 0.6.12 on the www host) with no way for a client to
+      request either.
+    breaking_change_policy: none published
+  contracts:
+    scheme: semver-suite
+    current: 2.2.2
+    versions: ['1.0.0', '1.1.0', '2.0.0', '2.1.0', '2.2.0', '2.2.1', '2.2.2']
+    detail: >-
+      Biconomy versions its smart contracts in groups; one "Suite" version pins many individual
+      contract versions. Composable batching requires v2.2.0 or above; v2.2.2 adds the audited
+      reference implementation plus the gteSigned/lteSigned/or constraint types. Older v2.2.x
+      versions remain supported for accounts that have not migrated. Clients opt in with
+      getMEEVersion(MEEVersion.V2_2_2) in @biconomy/abstractjs.
+    matrix: https://docs.biconomy.io/contracts-and-audits/supported-chains
+  sdk:
+    package: '@biconomy/abstractjs'
+    current: 2.0.0
+    released: '2026-08-07'
+deprecation:
+  policy_published: true
+  policy_form: migration-guides
+  policy_url: https://docs.biconomy.io/upgrade-migrate/index
+  headers:
+    sunset: false
+    deprecation: false
+    detail: >-
+      No RFC 8594 Sunset header and no Deprecation header is documented or observed. Nothing in
+      any published spec carries `deprecated: true`.
+  paths:
+    - name: Biconomy Smart Account v2 to Nexus
+      url: https://docs.biconomy.io/upgrade-migrate/v2-to-nexus
+      detail: >-
+        Migration from the v2 smart account to Nexus, preserving the account address, balances and
+        history. The bcnmy org additionally maintains an `upgrade-server` repository described as
+        "Upgrading v2 Accounts to Nexus after the shutdown of the Biconomy [v2 service]".
+    - name: Nexus to Nexus (MEE Suite upgrade)
+      url: https://docs.biconomy.io/upgrade-migrate/upgrade-mee-suite
+      detail: >-
+        In-band and machine-driven: POST /v1/mee/orchestrator reports isUpgradeNeeded per chain,
+        and POST /v1/mee/upgrade returns a signable upgrade quote naming nexusVersion and
+        targetVersion. This is a genuinely good deprecation surface — the client is told which of
+        its accounts are stale and handed the transaction to fix them.
+    - name: Deprecated contract versions
+      url: https://docs.biconomy.io/contracts-and-audits
+      detail: >-
+        The contracts page marks superseded contract deployments as deprecated with a directive to
+        use the latest version for new deployments.
+  superseded_sdks:
+    - '@biconomy/sdk (last release 2025-01-16)'
+    - '@biconomy/account and the v3/v4 @biconomy/* family (last release 2024-10-11)'
+    - '@biconomy/mexa (last release 2023-03-14)'
+  superseded_sdks_note: >-
+    None of these carry a deprecation notice on npm. A developer arriving from an old tutorial
+    installs a package frozen for one to three years with nothing in the registry saying so.
+status_page:
+  published: false
+  probed_url: https://status.biconomy.io
+  http_status: 200
+  finding: >-
+    The subdomain resolves to a Cronitor status page that returns "Not found - please check your
+    custom domain or subdomain configuration." Biconomy provisioned a status host and never
+    finished wiring it, so there is a status URL that looks live and reports nothing. No StatusPage
+    pointer is emitted in apis.yml on the strength of it.
+  probed: '2026-08-24'
+sla:
+  published: false
+  detail: >-
+    No uptime commitment, availability target, credit schedule or support-response SLA is published
+    on the docs, the marketing site or the ai.txt manifest.
+audits:
+  - auditor: CodeHawks-Cyfrin
+    scope: Nexus
+    date: '2024-09'
+  - auditor: Spearbit
+    scope: Nexus
+    date: '2024-10/11'
+  - auditor: Zenith
+    scope: Nexus
+    date: '2025-03'
+  - auditor: Pashov Audit Group
+    scope: Nexus
+    date: '2025-03'
+  - auditor: Pashov Audit Group
+    scope: ERC-8211 composability module
+    date: '2026-05'
+    report: https://github.com/bcnmy/erc8211-contracts/blob/main/audits/2026-05-Composability-Nexus-Pashov-Review.pdf
+audits_note: >-
+  Audit publication is Biconomy's strongest operational-transparency signal and it is entirely
+  on the contract side. There is no equivalent for the hosted API — no pen-test summary, no SOC 2
+  or ISO 27001 claim, no trust center, no security.txt.
+deprecated_operations: []

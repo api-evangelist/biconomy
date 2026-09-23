@@ -1,0 +1,79 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  servers[] in the published OpenAPI (https://docs.biconomy.io/supertransaction-api/openapi.yaml
+  and https://www.biconomy.io/openapi.json), the testnet deployment matrix at
+  https://docs.biconomy.io/contracts-and-audits/supported-chains, and
+  https://docs.biconomy.io/gasless-apps/testnet-sponsorship. Probed 2026-08-24.
+provider: Biconomy
+providerId: biconomy
+description: >-
+  Biconomy's test surface is the public EVM testnets rather than a vendor-simulated sandbox. There
+  is no test-vs-live key prefix, no fixture generator, no test clock and no set of magic values
+  that force a particular outcome — because the thing being tested is a real chain, and a testnet
+  chain behaves like the real one. What Biconomy does provide is a staging API host, a documented
+  testnet sponsorship path so gas is free while you develop, Nexus pre-deployed across a long list
+  of testnets, and an in-band simulation mode that lets you rehearse against mainnet without
+  signing.
+modes:
+  - name: production
+    base_url: https://api.biconomy.io
+    detail: Declared as "Production server" in servers[] of both published specs.
+  - name: staging
+    base_url: https://api-staging.biconomy.io
+    detail: >-
+      Declared as "Staging server" in servers[] of both published specs. Biconomy publishes no
+      prose describing what staging guarantees, what data it holds, or whether the same API key
+      works there — it is named in the contract and nowhere else.
+    documented_in_prose: false
+key_separation:
+  test_live_prefixes: false
+  detail: >-
+    No separate test key. The documented key prefix is `mee_` with no mode marker, so a key cannot
+    be inspected to tell whether it is pointed at test or live. Environment separation is by chain
+    ID and by base URL, not by credential.
+test_networks:
+  detail: >-
+    Nexus is pre-deployed on the testnets below, with the MEE Suite versions available on each
+    read from the published deployment matrix.
+  networks:
+    - { name: Polygon Amoy Testnet, versions: ['2.2.2','2.2.1','2.1.0','2.0.0','1.1.0','1.0.0'] }
+    - { name: OP Sepolia Testnet, versions: ['2.2.2','2.2.1','2.1.0','2.0.0','1.1.0','1.0.0'] }
+    - { name: BSC Testnet, versions: ['2.2.2','2.2.1','2.1.0','2.0.0','1.1.0','1.0.0'] }
+    - { name: Gnosis Chiado Testnet, versions: ['2.2.2','2.2.1','2.1.0','2.0.0','1.1.0','1.0.0'] }
+    - { name: Scroll Sepolia Testnet, versions: ['2.2.1','2.1.0','2.0.0','1.1.0','1.0.0'] }
+    - { name: Avalanche Fuji Testnet, versions: ['2.2.2','2.2.1','2.1.0','2.0.0','1.1.0'] }
+    - { name: Apechain Curtis Testnet, versions: ['2.2.1','2.1.0','2.0.0','1.1.0'] }
+    - { name: Core DAO Testnet, versions: ['2.2.1','2.1.0','2.0.0','1.1.0'] }
+    - { name: Sei Testnet, versions: ['2.2.1','2.1.0','2.0.0','1.1.0'] }
+    - { name: Unichain Testnet, versions: ['2.2.2','2.2.1','2.1.0','1.1.0'] }
+    - { name: Worldchain Testnet, versions: ['2.2.2','2.2.1','2.1.0','1.1.0'] }
+    - { name: Chiliz Spicy Testnet, versions: ['2.2.2','2.2.1','2.1.0','1.1.0'] }
+    - { name: Neura Testnet, versions: ['2.2.2','2.2.1','1.1.0'] }
+    - { name: Sonic Testnet, versions: ['2.2.2','2.2.1','2.1.0'] }
+    - { name: Monad Testnet, versions: ['2.2.2','2.2.1','2.1.0'] }
+    - { name: Plasma Testnet, versions: ['2.2.2','2.2.1','2.1.0'] }
+    - { name: Sophon Zk Testnet, versions: ['2.2.1','2.1.0'] }
+    - { name: Arc Testnet, versions: ['2.2.1','2.1.0'] }
+  source: https://docs.biconomy.io/contracts-and-audits/supported-chains
+testnet_sponsorship:
+  published: true
+  url: https://docs.biconomy.io/gasless-apps/testnet-sponsorship
+  detail: >-
+    A documented path to have gas sponsored on testnets so a developer can exercise the full
+    gasless flow without funding accounts. This is the closest thing to a free sandbox tier.
+simulation:
+  published: true
+  mechanism: >-
+    `simulate` and `simulationOverrides` on POST /v1/quote, plus `fast-quote` mode for UI
+    previews. MEE also simulates each step internally before committing it, which is the mechanism
+    behind cross-chain waiting.
+  detail: >-
+    Lets a client rehearse a full plan — including against mainnet — without producing a signature
+    or changing state. Functionally this is Biconomy's dry-run surface; see
+    conventions/biconomy-conventions.yml.
+absent:
+  - Test card numbers or equivalent forced-outcome fixtures — not applicable to an on-chain API.
+  - Test clocks / time simulation. `upperBoundTimestamp` bounds real time; it does not move it.
+  - A fixture or trigger tool for driving webhook/event scenarios (there is no event surface).
+  - Any published description of what api-staging.biconomy.io is for or who may use it.

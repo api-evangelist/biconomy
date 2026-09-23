@@ -1,3 +1,26 @@
+generated: '2026-08-24'
+method: searched
+source: >-
+  https://docs.biconomy.io/overview/supertransaction-api, https://docs.biconomy.io/gasless-apps/sponsorship,
+  and a full-text search of the 644 KB https://docs.biconomy.io/llms-full.txt corpus for rate-limit
+  language (2026-08-24).
+limit_count: 0
+published_numeric_limits: false
+response_headers:
+  documented: false
+  observed: false
+  x_ratelimit: null
+  ratelimit: null
+  retry_after: null
+  finding: >-
+    Biconomy documents NO rate-limit response headers. A search of the complete published
+    documentation corpus returns no X-RateLimit-*, no RFC 9331/9440-style RateLimit-*, and no
+    Retry-After. The only rate-limit language in the corpus refers to the Usage Limit POLICY on
+    Smart Sessions — an on-chain constraint on how often a delegated agent may act — which is a
+    different mechanism from transport throttling and must not be read as one. The consequence for
+    an agent is that there is no runtime budget signal at all: it cannot know how close it is to a
+    limit and can only discover exhaustion by being refused.
+  checked: '2026-08-24'
 specification: API Commons Rate Limits
 specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits

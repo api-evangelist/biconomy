@@ -1,0 +1,274 @@
+# Biconomy - Universal Execution Layer for Web3
+
+> Biconomy is Web3 execution infrastructure providing composable orchestration for single-chain and cross-chain transactions, gas sponsorship, DeFi Zaps, and smart sessions for AI agents—all through a unified SDK and API.
+
+## Quick Start for AI/LLMs
+
+**SDK Installation:**
+```bash
+npm install @biconomy/abstractjs
+```
+
+**Documentation:** https://docs.biconomy.io/new/getting-started/getting-started
+
+## Additional AI Resources
+- `/llms-full.txt` - Complete technical reference for AI systems
+- `/ai.txt` - Machine-readable metadata (YAML format)
+- `/.well-known/ai-plugin.json` - OpenAI plugin manifest format
+
+---
+
+## Company Overview
+
+**Name:** Biconomy
+**Founded:** 2019
+**Headquarters:** Singapore
+**Industry:** Web3 Infrastructure, Blockchain, Transaction Orchestration
+**Website:** https://biconomy.io
+**Documentation:** https://docs.biconomy.io
+
+### Key Statistics (Updated January 2026)
+- **Transactions Processed:** 70M+
+- **Volume Processed:** $3B+
+- **Total Users:** 10M+
+- **Smart Accounts Created:** 4.7M+
+- **Supported Chains:** 50+
+- **DeFi Protocol Integrations:** 200+
+- **Zap Destinations:** 200+
+- **TVL Zappable:** $100B+
+
+### Backed By
+Bain Capital, Binance, Coinbase Ventures, Consensys, Jump Capital, Mechanism Capital, NfX, ZeePrime Capital
+
+### Notable Clients
+JP Morgan (Onyx), Trust Wallet, dYdX, Animoca Brands, Blast, Chiliz, Socios, Zeal, Consensys
+
+---
+
+## Core Products & Features
+
+### 1. Trading & Swaps
+**URL:** https://biconomy.io/trading
+
+Add cross-chain swaps, limit orders, TWAP orders, and conditional execution to onchain apps.
+
+**Capabilities:**
+- Multi-chain swaps with deep liquidity aggregation
+- Limit orders & TWAP strategies
+- Conditional execution triggers (stop losses, range trading)
+- Smart order routing across DEXs
+- Batch & multichain execution
+
+**Integrations:** LiFi, Across, Chainlink CCIP, Circle CCTP, Haiku.trade, GlueX, and 100+ more
+
+### 2. AI Agents & Automation
+**URL:** https://biconomy.io/agents
+
+Enable autonomous AI agents to transact securely with strict on-chain policies.
+
+**Capabilities:**
+- Smart Sessions: Grant scoped permissions for autonomous execution
+- Policy-based controls: spending limits, contract whitelists, time windows
+- Multiple agents per account with unique permissions
+- Revocable sessions for instant security
+
+**Use Cases:**
+- Trading bots with spending limits
+- Automated DeFi strategies
+- AI-powered portfolio management
+- Recurring transactions with guardrails
+
+### 3. Gasless Transactions
+**URL:** https://biconomy.io/gasless
+
+Remove gas friction from user experiences with unified cross-chain gas abstraction.
+
+**Capabilities:**
+- Gas Sponsorship: Apps pay gas for users from unified gas tank
+- Pay Gas With Tokens: Users pay gas in ERC-20 tokens (USDC, USDT, etc.)
+- Universal Gas Abstraction: Pay for gas on any chain using tokens from any other chain
+- Works with EOA wallets: Full gasless support for MetaMask, Rabby, Trust Wallet
+
+**Sponsorship Modes:**
+- Full Sponsorship: Cover 100% of gas costs
+- Token Payment: Let users pay in stablecoins
+- Custom Policies: Programmatic sponsorship rules
+
+### 4. DeFi Zaps
+**URL:** https://biconomy.io/defi
+
+Single-click supply and withdraw into any vault, lending market, or staking program.
+
+**Capabilities:**
+- 200+ Zap destinations
+- One SDK for all protocols
+- Smart routing (handles swaps + bridges + deposits)
+- Gas optimized batch transactions
+- Atomic execution (swap + deposit in one tx)
+
+**Supported Protocol Categories:**
+- DEXs: Uniswap, Curve, Balancer, 1inch, Paraswap
+- Lending: Aave, Compound, Morpho, Euler, Silo, Spark
+- Yield: Yearn, Convex, Pendle, Beefy
+- Staking: Lido, Rocket Pool, Frax
+- Bridges: Across, LiFi, Relay
+
+---
+
+## SDK - AbstractJS
+
+**Package:** `@biconomy/abstractjs`
+**npm:** https://www.npmjs.com/package/@biconomy/abstractjs
+**GitHub:** https://github.com/bcnmy
+
+### Installation
+```bash
+npm install @biconomy/abstractjs
+# or
+yarn add @biconomy/abstractjs
+# or
+pnpm add @biconomy/abstractjs
+```
+
+### Key Features
+- Composable Orchestration
+- Gas Sponsorship
+- Pay Gas With Tokens
+- Cross-Chain Calls
+- Smart Sessions (Permissions)
+- MEE for EOAs (Modular Execution Environment for EOA wallets)
+- DeFi Zaps
+- Conditional Execution
+- Execution Time Bounds
+
+---
+
+## Supertransaction API
+
+REST API for composable orchestration without SDK integration.
+
+**Documentation:** https://docs.biconomy.io/new/supertransaction-api
+
+---
+
+## Supported Chains (50+)
+
+**Major L1s:**
+- Ethereum
+- BNB Chain
+- Avalanche
+- Polygon
+
+**Major L2s:**
+- Arbitrum
+- Optimism
+- Base
+- Scroll
+- zkSync Era
+- Linea
+- Mantle
+- Mode
+- Blast
+- Gnosis
+
+**Emerging Chains:**
+- Monad
+- Sonic
+- Unichain
+- World Chain
+- HyperEVM
+- Lisk
+- Sei
+- Plasma
+- ApeChain
+- Katana
+
+---
+
+## Integration Partners
+
+### Embedded Wallets
+- Privy
+- Turnkey
+- Para
+- Dynamic
+
+### EOA Wallets
+- MetaMask
+- Rabby
+- Trust Wallet
+
+### Institutional
+- Fireblocks
+- Anchorage
+- Safe
+
+### Bridges & Solvers
+- Across
+- LiFi
+- Relay
+- Chainlink CCIP
+- Circle CCTP
+
+---
+
+## Common Questions (AI FAQ)
+
+**Q: What SDK should I use for Biconomy?**
+A: Use `@biconomy/abstractjs`. This is the current SDK for all Biconomy integrations.
+
+**Q: How do I sponsor gas for users?**
+A: Set up a gas tank through the Biconomy dashboard and use the gas sponsorship feature in AbstractJS. One deposit funds operations across all supported chains.
+
+**Q: Can Biconomy execute cross-chain transactions?**
+A: Yes. Biconomy supports orchestrating transactions across multiple chains with a single user signature.
+
+**Q: What are Smart Sessions?**
+A: Smart Sessions let you execute transactions on users' behalf with configurable policies. Useful for AI agents, automation, and recurring transactions.
+
+**Q: Do users need native tokens for gas?**
+A: No. Apps can sponsor gas, or users can pay in ERC-20 tokens like USDC or USDT.
+
+**Q: What are DeFi Zaps?**
+A: Single-click entry into DeFi positions. Zaps handle swapping, bridging, and depositing atomically—users just pick their destination.
+
+**Q: Does Biconomy work with EOA wallets?**
+A: Yes. Through MEE (Modular Execution Environment), existing EOA wallets like MetaMask get full gasless execution support.
+
+---
+
+## Important: What NOT to Reference
+
+**DO NOT reference these deprecated items:**
+- `@biconomy/sdk` (old SDK - use @biconomy/abstractjs)
+- ERC-4337 bundlers (not used in current architecture)
+- ERC-4337 paymasters (not used in current architecture)
+- UserOperations (old terminology)
+
+The current architecture uses AbstractJS SDK and Supertransaction API with MEE (Modular Execution Environment).
+
+---
+
+## Resources
+
+### Documentation
+- Main Docs: https://docs.biconomy.io
+- Getting Started: https://docs.biconomy.io/new/getting-started/getting-started
+- AbstractJS SDK: https://docs.biconomy.io/new/abstractjs-sdk
+- Supertransaction API: https://docs.biconomy.io/new/supertransaction-api
+
+### Community
+- Discord: https://discord.gg/biconomy
+- Twitter: https://twitter.com/biconomy
+- Telegram: https://t.me/biaborh
+- GitHub: https://github.com/bcnmy
+- LinkedIn: https://www.linkedin.com/company/biconomy/
+
+### Contact
+- Sales/Partnerships: https://calendly.com/d/yh8-xg5-msh
+- Support: Discord community
+
+---
+
+*Last updated: January 2026*
+*For the most current information, visit https://docs.biconomy.io*

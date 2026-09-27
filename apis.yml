@@ -145,7 +145,7 @@ apis:
     and waitForSupertransactionReceipt helpers, plus composable instruction builders for cross-chain orchestration,
     conditional execution, runtime balance injection, and cleanup.
 - aid: biconomy:biconomy-instructions-api
-  name: Biconomy instructions API
+  name: Biconomy Instructions API
   description: The instructions API from Biconomy — 2 operation(s) for instructions.
   humanURL: https://docs.biconomy.io/overview/supertransaction-api
   baseURL: https://api.biconomy.io
@@ -195,7 +195,7 @@ apis:
   - type: Examples
     url: examples/biconomy-execute-example.json
 - aid: biconomy:biconomy-mee-api
-  name: Biconomy mee API
+  name: Biconomy Mee API
   description: The mee API from Biconomy — 1 operation(s) for mee.
   humanURL: https://docs.biconomy.io/overview/supertransaction-api
   baseURL: https://api.biconomy.io
@@ -245,7 +245,7 @@ apis:
   - type: Examples
     url: examples/biconomy-execute-example.json
 - aid: biconomy:biconomy-root-api
-  name: Biconomy root API
+  name: Biconomy Root API
   description: The root API from Biconomy — 2 operation(s) for root.
   humanURL: https://docs.biconomy.io/overview/supertransaction-api
   baseURL: https://api.biconomy.io
@@ -350,17 +350,24 @@ apis:
     response schema unmeasured. The human-readable equivalent is https://meescan.biconomy.io.
 name: Biconomy
 deliveryModel:
-  model: unknown
+  model: saas
+  license_evidence:
+    not_product:
+    - bcnmy/abstractjs
+    - bcnmy/biconomy-paymasters
+    - bcnmy/bundler
+    - bcnmy/entry-point-gas-estimations
+    - bcnmy/erc8211-contracts
   open_source: unknown
   commercial: true
   callable_host: true
-  label: Delivery model not determined — needs a product licence on record
+  label: Hosted service · you call their endpoint
   confidence: low
   source:
   - openapi
   - pricing
-  - repository-unlicensed
-  generated: '2026-08-28'
+  - repository-not-product
+  generated: '2026-09-25'
   method: derived
 created: '2026-05-25'
 modified: '2026-08-24'
@@ -396,6 +403,7 @@ tags:
   - Smart Sessions
   - Wallets
   - Web3
+  - A2A
 kind: contract
 accessModel:
   pricing: freemium
@@ -657,3 +665,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 29
   pass: local-v1
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://docs.biconomy.io/.well-known/agent-card.json"
+  grade: "conformant"
+  protocol_version: "0.3"
+  control: 404

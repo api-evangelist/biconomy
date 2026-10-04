@@ -1,37 +1,35 @@
-# Kin Score artifact — biconomy — 2026-08-25T125852
+# Kin Score artifact — biconomy — 2026-09-25T210408
 # The API Evangelist rating (https://github.com/api-evangelist/kin-score). Generated; do not edit.
 ---
 kin_score:
   slug: biconomy
-  schema_version: 0.14.0
-  scored_at: '2026-08-25'
-  run_ts: 2026-08-25T125852
-  composite: 49.5
-  band: developing
+  schema_version: 0.23.0
+  scored_at: '2026-09-25'
+  run_ts: 2026-09-25T210408
+  composite: 56.5
+  band: strong
   facets:
-    discoverability: 63.0
-    contract_quality: 69.4
-    governance: 59.1
-    operational_transparency: 36.8
-    developer_ergonomics: 45.2
-    commercial_clarity: 28.9
-    contract_governance: 59.1
+    discoverability: 66.7
+    contract_quality: 65.1
+    contract_governance: 45.5
+    operational_transparency: 60.5
+    developer_ergonomics: 79.0
     access_clarity: 28.9
   agent_readiness:
-    score: 31.2
+    score: 36.0
     band: agent-ready
     dimensions:
       spec_presence: true
       agentic_access: derived
       reversibility_documented: false
-      mcp_server: documented
+      mcp_server: platform
       auth_clarity: bearer
       idempotency: false
-      error_semantics: false
+      error_semantics: documented
       openapi_examples: verified
       rate_limit_signal: documented
       event_surface_described: false
-      agent_skills: false
+      agent_skills: unknown
       well_known_catalog: false
       consent_identity: false
       agent_card: false
@@ -44,7 +42,7 @@ kin_score:
     applies: true
     regime: Payments
     regime_id: payments
-    score: 26.6
+    score: 15.2
     matched_via: tags
   provenance:
     mcp: first-party

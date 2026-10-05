@@ -1,0 +1,12 @@
+{
+ "url": "https://docs.biconomy.io/supertransaction-api/openapi.yaml",
+ "requested_url": "https://docs.biconomy.io/supertransaction-api/openapi.yaml",
+ "status": 200,
+ "content_type": "text/yaml",
+ "bytes": 170878,
+ "sha256": "b9f081376d1eac74d144916e92caef9e56e350ccd8854863dac155676532ab7f",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 1.0), but the bytes differ, so the archive is an earlier or reformatted copy."
+}

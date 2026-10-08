@@ -106,3 +106,30 @@ plans:
         unit: 1
         price: contact-sales
         userMultiplied: false
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  - negotiated
+  units:
+  - object
+  plans:
+  - name: MEE Developer
+    access: other
+    model: metered
+    model_how: stated
+    units:
+    - object
+    - other
+    periods:
+    - month
+    - per-use
+  - name: Enterprise
+    access: negotiated
+    model: negotiated
+    model_how: stated
+    units:
+    - other
+    periods:
+    - year

@@ -29,6 +29,12 @@ apis:
   - ERC-4337
   - Paymaster
   - Gas Sponsorship
+  - Gasless Transactions
+  tags_raw:
+  - Account Abstraction
+  - ERC-4337
+  - Paymaster
+  - Gas Sponsorship
   - Gasless
   humanURL: https://docs.biconomy.io/gasless-apps/sponsorship
   properties:
@@ -386,6 +392,25 @@ description: >-
   is how AI agents and automations transact on a user's behalf without holding their key. Biconomy
   also authored ERC-8211 for composable batching.
 tags:
+  - Account Abstraction
+  - Blockchain
+  - Bundler
+  - Cross-Chain
+  - DeFi
+  - ERC-4337
+  - ERC-7579
+  - ERC-7702
+  - Ethereum
+  - Gas Abstraction
+  - Gasless Transactions
+  - MEE
+  - Paymaster
+  - Smart Accounts
+  - Smart Sessions
+  - Wallets
+  - Web3
+  - A2A
+tags_raw:
   - Account Abstraction
   - Blockchain
   - Bundler

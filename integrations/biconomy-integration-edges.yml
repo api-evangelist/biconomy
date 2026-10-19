@@ -32,9 +32,118 @@ edges:
     detected: '2026-10-15'
   detected_by: sweep-ai-agents.py
   first_seen: '2026-10-15'
+- partner_name: npm registry
+  partner: npm
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (JavaScript/TypeScript)
+  evidence: https://www.npmjs.com/package/@biconomy/abstractjs
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@biconomy/abstractjs'
+      version: 2.0.2
+      released: '2026-09-01'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/abstractjs
+      repo_leg: domain:biconomy.io
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/abstractjs-canary'
+      version: 0.4.25
+      released: '2026-09-01'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/abstractjs-canary
+      repo_leg: domain:biconomy.io
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/account'
+      version: 4.5.7
+      released: '2025-05-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/account
+      repo_leg: domain:biconomy.io
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/bundler'
+      version: 3.1.4
+      released: '2025-05-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/bundler
+      repo_leg: github-org:bcnmy
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/common'
+      version: 3.1.4
+      released: '2025-05-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/common
+      repo_leg: github-org:bcnmy
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/mexa'
+      version: 3.0.6
+      released: '2025-05-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/mexa
+      repo_leg: github-org:bcnmy
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/passkey'
+      version: 0.0.2
+      released: '2025-05-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/passkey
+      repo_leg: domain:biconomy.io
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/paymaster'
+      version: 3.1.4
+      released: '2025-05-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/paymaster
+      repo_leg: github-org:bcnmy
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    - name: '@biconomy/sdk'
+      version: 0.0.29
+      released: '2025-05-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@biconomy/sdk
+      repo_leg: domain:biconomy.io
+      publisher_leg: email:biconomy.io
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
 generated: '2026-10-15'
 method: searched
 source:
 - https://a2aregistry.org/api/agents
 checked:
 - https://a2aregistry.org/api/agents
+- https://api.nuget.org/v3
+- https://crates.io/api/v1
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.npmjs.org
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1

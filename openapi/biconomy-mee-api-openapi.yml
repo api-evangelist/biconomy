@@ -392,3 +392,9 @@ components:
 x-refined-from:
 - biconomy-supertransaction-api-0.6.12-openapi.json
 - biconomy-supertransaction-api-openapi.yml
+x-provenance:
+  method: harvested
+  publisher: Biconomy
+  source: https://www.biconomy.io/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
